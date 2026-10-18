@@ -21,8 +21,14 @@ class Block
     #[ORM\Column(length: 255)]
     private ?string $name = null;
 
-    #[ORM\Column(type: Types::TEXT)]
+    #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $description = null;
+
+    #[ORM\Column(type: Types::TEXT, nullable: true)]
+    private ?string $objective = null;
+
+    #[ORM\Column(type: Types::TEXT, nullable: true)]
+    private ?string $instruction = null;
 
     #[ORM\Column]
     private ?int $duration = null;
@@ -42,6 +48,12 @@ class Block
     #[ORM\Column]
     private ?\DateTime $dateUpdate = null;
 
+    /**
+     * @var Collection<int, Activity>
+     */
+    #[ORM\ManyToMany(targetEntity: Activity::class, inversedBy: 'blocks')]
+    private Collection $activities;
+
 
     #[ORM\PrePersist]
     #[ORM\PreUpdate]
@@ -59,6 +71,7 @@ class Block
     public function __construct()
     {
         $this->sessions = new ArrayCollection();
+        $this->activities = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -86,6 +99,29 @@ class Block
     public function setDescription(string $description): static
     {
         $this->description = $description;
+
+        return $this;
+    }
+
+    public function getObjective(): ?string
+    {
+        return $this->objective;
+    }
+
+    public function setObjective(string $objective): static
+    {
+        $this->objective = $objective;
+        return $this;
+    }
+
+    public function getInstruction(): ?string
+    {
+        return $this->instruction;
+    }
+
+    public function setInstruction(string $instruction): static
+    {
+        $this->instruction = $instruction;
 
         return $this;
     }
@@ -161,6 +197,30 @@ class Block
     public function setDateUpdate(\DateTime $dateUpdate): static
     {
         $this->dateUpdate = $dateUpdate;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Activity>
+     */
+    public function getActivities(): Collection
+    {
+        return $this->activities;
+    }
+
+    public function addActivity(Activity $activity): static
+    {
+        if (!$this->activities->contains($activity)) {
+            $this->activities->add($activity);
+        }
+
+        return $this;
+    }
+
+    public function removeActivity(Activity $activity): static
+    {
+        $this->activities->removeElement($activity);
 
         return $this;
     }

@@ -21,14 +21,14 @@ class Activity
     #[ORM\Column(length: 255)]
     private ?string $name = null;
 
-    #[ORM\Column(type: Types::TEXT)]
+    #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $description = null;
 
-    #[ORM\Column(length: 512)]
-    private ?string $type = null;
-
-    #[ORM\Column(type: Types::TEXT)]
+      #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $objective = null;
+
+    #[ORM\Column(type: Types::TEXT, nullable: true)]
+    private ?string $instruction = null;
 
     #[ORM\Column(length: 20)]
     private ?string $duration = null;
@@ -51,6 +51,12 @@ class Activity
     #[ORM\Column]
     private ?\DateTime $dateUpdate = null;
 
+    /**
+     * @var Collection<int, Block>
+     */
+    #[ORM\ManyToMany(targetEntity: Block::class, mappedBy: 'activities')]
+    private Collection $blocks;
+
 
     #[ORM\PrePersist]
     #[ORM\PreUpdate]
@@ -68,6 +74,7 @@ class Activity
     public function __construct()
     {
         $this->exercises = new ArrayCollection();
+        $this->blocks = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -99,14 +106,14 @@ class Activity
         return $this;
     }
 
-    public function getType(): ?string
+    public function getInstruction(): ?string
     {
-        return $this->type;
+        return $this->instruction;
     }
 
-    public function setType(string $type): static
+    public function setInstruction(string $instruction): static
     {
-        $this->type = $type;
+        $this->instruction = $instruction;
 
         return $this;
     }
@@ -203,6 +210,33 @@ class Activity
     public function setDateUpdate(\DateTime $dateUpdate): static
     {
         $this->dateUpdate = $dateUpdate;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Block>
+     */
+    public function getBlocks(): Collection
+    {
+        return $this->blocks;
+    }
+
+    public function addBlock(Block $block): static
+    {
+        if (!$this->blocks->contains($block)) {
+            $this->blocks->add($block);
+            $block->addActivity($this);
+        }
+
+        return $this;
+    }
+
+    public function removeBlock(Block $block): static
+    {
+        if ($this->blocks->removeElement($block)) {
+            $block->removeActivity($this);
+        }
 
         return $this;
     }
