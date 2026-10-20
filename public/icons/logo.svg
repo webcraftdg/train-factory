@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" role="img" aria-labelledby="title desc">
+<title id="title">TrainFactory</title><desc id="desc">Monogramme TF blanc et bleu avec gant de boxe bleu sur fond bleu nuit.</desc>
+<defs>
+ <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#123c80"/><stop offset=".35" stop-color="#071e45"/><stop offset="1" stop-color="#020b1c"/></linearGradient>
+ <linearGradient id="letter" x1="0" y1="0" x2=".8" y2="1"><stop stop-color="#13c6f5"/><stop offset=".55" stop-color="#087bfa"/><stop offset="1" stop-color="#1552ed"/></linearGradient>
+ <linearGradient id="glove" x1=".1" y1="0" x2=".8" y2="1"><stop stop-color="#18c6ff"/><stop offset=".4" stop-color="#0879f4"/><stop offset="1" stop-color="#0731b4"/></linearGradient>
+ <linearGradient id="cuff" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#edf8ff"/><stop offset=".4" stop-color="#0877f0"/><stop offset="1" stop-color="#061e72"/></linearGradient>
+</defs>
+<!-- Background icon -->
+<rect x="20" y="20" width="984" height="984" rx="190" fill="url(#bg)"/>
+<!-- T -->
+<path d="M205 251 H709 Q718 251 711 259 L634 335 Q626 344 613 344 H499 Q489 344 485 356 L373 794 Q369 809 357 809 H280 Q269 809 273 794 L386 359 Q389 346 376 346 H150 Q136 346 143 334 L188 263 Q195 251 205 251 Z" fill="#fff"/>
+<!-- F -->
+<path d="M668 350 H947 Q957 350 949 362 L896 430 Q888 439 875 439 H650 Q636 439 631 454 L603 548 H845 Q855 548 849 558 L808 614 Q802 621 790 621 H581 L530 816 Q527 827 515 827 H411 Q400 827 404 815 L516 437 Q520 424 534 412 L647 358 Q656 350 668 350 Z" fill="url(#letter)"/>
+<!-- Glove outer white rim -->
+<path d="M199 618 Q207 568 249 524 Q283 489 331 487 Q378 484 411 518 Q453 556 451 608 Q452 656 414 693 L366 749 L329 798 L264 849 L177 779 L137 716 Z" fill="#f6fbff" stroke="#061735" stroke-width="12" stroke-linejoin="round"/>
+<!-- Glove blue palm -->
+<path d="M216 624 Q235 554 280 530 Q326 504 362 532 Q402 561 405 612 Q404 655 365 694 L321 746 L267 790 L191 735 L170 696 Z" fill="url(#glove)"/>
+<!-- Glove top highlight -->
+<path d="M239 602 Q260 547 305 535 Q334 530 358 549 Q328 546 307 563 Q277 583 258 622 Z" fill="#48d5ff" opacity=".85"/>
+<!-- Knuckle crease -->
+<path d="M301 581 Q339 563 365 583 Q348 584 338 609 Q367 595 390 609 Q373 618 370 644 Q356 681 321 690 Q342 667 331 647 Q313 666 280 669 Q305 644 300 619 Q275 626 251 651 Q265 607 301 581 Z" fill="#042d91" opacity=".95"/>
+<!-- Thumb -->
+<path d="M236 642 Q250 613 276 611 Q300 609 316 632 Q322 654 310 674 Q293 700 261 702 L230 691 Z" fill="#0976e9" stroke="#06377f" stroke-width="9"/>
+<path d="M246 645 Q259 624 277 625 Q289 625 298 638" fill="none" stroke="#d8f6ff" stroke-width="11" stroke-linecap="round"/>
+<!-- wrist connector -->
+<path d="M181 691 L275 778 L244 818 L151 737 Z" fill="#072d96" stroke="#f3faff" stroke-width="12"/>
+<!-- cuff -->
+<path d="M131 711 Q139 701 151 710 L269 811 Q279 820 267 834 L211 893 Q200 905 187 895 L81 804 Q68 792 80 778 Z" fill="url(#cuff)" stroke="#fff" stroke-width="15" stroke-linejoin="round"/>
+<path d="M129 740 L236 829 L205 861 L100 773 Z" fill="#06358e" stroke="#c9efff" stroke-width="9"/>
+<path d="M136 747 L227 825 L214 838 L122 761 Z" fill="#fff"/>
+</svg>

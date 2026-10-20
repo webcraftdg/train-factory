@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Attribute\PageTitle;
 use App\Entity\Session;
 use App\Form\SessionType;
 use App\Repository\SessionRepository;
@@ -10,11 +11,17 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
+#[IsGranted('IS_AUTHENTICATED')]
 #[Route('/seances', name:'app_session_')]
 final class SessionController extends AbstractController
 {
     #[Route(name: 'index', methods: ['GET'])]
+    #[PageTitle(
+        title:'Liste des séances',
+        section:'Séances'
+    )]
     public function index(SessionRepository $sessionRepository): Response
     {
         return $this->render('session/index.html.twig', [

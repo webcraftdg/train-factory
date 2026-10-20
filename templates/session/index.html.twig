@@ -1,47 +1,37 @@
+
 {% extends 'base.html.twig' %}
 
-{% block title %}Session index{% endblock %}
+{% block title %}Mes séances - TrainFactory{% endblock %}
 
 {% block body %}
-    <h1>Session index</h1>
+<section>
+    <div class="mb-6 flex flex-col gap-4
+                sm:flex-row sm:items-center sm:justify-between">
 
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Id</th>
-                <th>Name</th>
-                <th>Description</th>
-                <th>Target</th>
-                <th>Duration</th>
-                <th>DateArchived</th>
-                <th>DateCreate</th>
-                <th>DateUpdate</th>
-                <th>actions</th>
-            </tr>
-        </thead>
-        <tbody>
+        <h1 class="text-2xl font-bold text-slate-900">
+            Mes séances
+        </h1>
+
+        <a href="{{ path('app_session_new') }}"
+           class="inline-flex min-h-11 items-center justify-center
+                  rounded-lg bg-blue-600 px-4 py-2
+                  font-medium text-white hover:bg-blue-700">
+            + Nouvelle séance
+        </a>
+    </div>
+
+    <div class="grid grid-cols-1 gap-4
+                md:grid-cols-2 xl:grid-cols-3">
+
         {% for session in sessions %}
-            <tr>
-                <td>{{ session.id }}</td>
-                <td>{{ session.name }}</td>
-                <td>{{ session.description }}</td>
-                <td>{{ session.target }}</td>
-                <td>{{ session.duration }}</td>
-                <td>{{ session.dateArchived ? session.dateArchived|date('Y-m-d') : '' }}</td>
-                <td>{{ session.dateCreate ? session.dateCreate|date('Y-m-d H:i:s') : '' }}</td>
-                <td>{{ session.dateUpdate ? session.dateUpdate|date('Y-m-d H:i:s') : '' }}</td>
-                <td>
-                    <a href="{{ path('app_session_show', {'id': session.id}) }}">show</a>
-                    <a href="{{ path('app_session_edit', {'id': session.id}) }}">edit</a>
-                </td>
-            </tr>
+            {% include 'session/_card.html.twig'
+                with { session: session } only %}
         {% else %}
-            <tr>
-                <td colspan="9">no records found</td>
-            </tr>
+            <p class="text-slate-500 md:col-span-2 xl:col-span-3">
+                Aucune séance disponible.
+            </p>
         {% endfor %}
-        </tbody>
-    </table>
 
-    <a href="{{ path('app_session_new') }}">Create new</a>
+    </div>
+</section>
 {% endblock %}

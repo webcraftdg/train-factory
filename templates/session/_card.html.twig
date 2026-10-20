@@ -1,0 +1,53 @@
+
+<article class="flex h-full flex-col rounded-xl border border-slate-200
+                bg-white p-5 shadow-sm transition-shadow
+                hover:shadow-md">
+
+    {# Public cible #}
+    <div class="mb-4 flex items-center justify-between gap-3">
+        <span class="rounded-full bg-blue-100 px-3 py-1
+                     text-xs font-medium text-blue-700">
+            {{ session.target }}
+        </span>
+    </div>
+
+    {# Titre et description #}
+    <h2 class="mb-2 text-lg font-semibold text-slate-900">
+        {{ session.name }}
+    </h2>
+
+    <p class="mb-5 line-clamp-3 text-sm text-slate-600">
+        {{ session.description|default('Aucune description') }}
+    </p>
+
+    {# Informations #}
+    <div class="mt-auto">
+        <div class="flex flex-wrap items-center gap-4 text-sm text-slate-500">
+
+            <span class="flex items-center gap-1">
+                Durée : {{ session.duration }} min
+            </span>
+
+            <span class="flex items-center gap-1">
+                {{ session.blocks|length }} blocs
+            </span>
+
+        </div>
+
+        {# Actions #}
+        <div class="mt-4 flex items-center justify-end
+                    border-t border-slate-100 pt-4">
+
+            <a href="{{ path('app_session_show', {'id': session.id}) }}"
+               class="inline-flex min-h-11 items-center rounded-lg
+                      bg-blue-600 px-4 py-2 text-sm font-medium
+                      text-white transition-colors hover:bg-blue-700
+                      focus-visible:outline-2
+                      focus-visible:outline-offset-2
+                      focus-visible:outline-blue-600">
+                Consulter →
+            </a>
+
+        </div>
+    </div>
+</article>
