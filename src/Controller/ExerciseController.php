@@ -24,7 +24,7 @@ final class ExerciseController extends AbstractController
         ]);
     }
 
-    #[Route('/new', name: 'new', methods: ['GET', 'POST'])]
+    #[Route('/creer', name: 'new', methods: ['GET', 'POST'])]
     public function new(Request $request, EntityManagerInterface $entityManager): Response
     {
         $exercise = new Exercise();
@@ -44,7 +44,7 @@ final class ExerciseController extends AbstractController
         ]);
     }
 
-    #[Route('/{id}', name: 'show', methods: ['GET'])]
+    #[Route('/{id}/detail', name: 'show', methods: ['GET'])]
     public function show(Exercise $exercise): Response
     {
         return $this->render('exercise/show.html.twig', [

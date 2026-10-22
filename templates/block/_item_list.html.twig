@@ -1,0 +1,41 @@
+<tr class="block p-4 transition-colors
+            hover:bg-slate-50
+            md:table-row md:p-0">
+
+    <td class="block font-semibold text-slate-900
+                md:table-cell md:px-5 md:py-4">
+        {{ bloc.name }}
+    </td>
+
+    <td class="mt-2 block break-words text-slate-600
+                md:mt-0 md:table-cell md:px-5 md:py-4">
+        {{ bloc.description|default('—') }}
+    </td>
+    <td class="mt-2 block break-words text-slate-600
+                md:mt-0 md:table-cell md:px-5 md:py-4">
+                Durée : {{ bloc.duration }} min
+    </td>
+
+    <td class="mt-2 block break-words text-slate-600
+                md:mt-0 md:table-cell md:px-5 md:py-4">
+        {{ bloc.activities|length }} activités
+    </td>
+
+    <td class="mt-3 block md:mt-0 md:table-cell
+                md:px-5 md:py-4 md:text-right">
+
+        <a href="{{ path('app_block_show', {id: bloc.id}) }}"
+        aria-label="Consulter {{ bloc.name }}"
+        title="Consulter {{ bloc.name }}"
+        class="inline-flex min-h-10 items-center gap-2
+                rounded-lg px-3 py-2 font-medium
+                text-blue-600 hover:bg-blue-50">
+            <span data-controller="svg"
+                data-svg-name-value="edit"
+                class="inline-flex  items-center justify-center"
+                aria-hidden="true">
+            </span>
+        </a>
+
+    </td>
+</tr>

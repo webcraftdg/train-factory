@@ -64,7 +64,7 @@
                         </li>
                     {% endfor %}
                 </ul>
-
+                {% if app.user %}
                 <div class="mt-2 border-t border-slate-700 pt-3
                             md:mt-0 md:ml-4 md:border-0 md:pt-0">
 
@@ -80,6 +80,7 @@
                         Déconnexion
                     </a>
                 </div>
+                {% endif %}
             </nav>
 
         </div>
