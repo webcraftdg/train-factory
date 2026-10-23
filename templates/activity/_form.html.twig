@@ -1,0 +1,199 @@
+
+{{ form_start(form) }}
+
+<div class="mx-auto w-full max-w-5xl space-y-6">
+
+    <div class="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
+
+        {# En-tête #}
+        <div class="border-b border-slate-100 px-4 py-5 sm:px-7">
+            <h2 class="text-xl font-semibold text-slate-900">
+                {{ form_title|default('Informations de l’activité') }}
+            </h2>
+
+            <p class="mt-1 text-sm text-slate-500">
+                Définissez les caractéristiques et les exercices de votre activité.
+            </p>
+        </div>
+
+        <div class="space-y-7 px-4 py-6 sm:px-7">
+
+            {{ form_errors(form) }}
+
+            {# Informations générales #}
+            <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
+
+                <div class="md:col-span-2">
+                    {{ form_label(form.name, null, {
+                        label_attr: {
+                            class: 'mb-2 block text-sm font-medium text-slate-700'
+                        }
+                    }) }}
+
+                    {{ form_widget(form.name, {
+                        attr: {
+                            class: 'w-full rounded-lg border border-slate-300 px-4 py-3 text-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20'
+                        }
+                    }) }}
+
+                    {{ form_errors(form.name) }}
+                </div>
+
+                <div>
+                    {{ form_label(form.duration, null, {
+                        label_attr: {
+                            class: 'mb-2 block text-sm font-medium text-slate-700'
+                        }
+                    }) }}
+
+                    {{ form_widget(form.duration, {
+                        attr: {
+                            class: 'w-full rounded-lg border border-slate-300 px-4 py-3 text-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20'
+                        }
+                    }) }}
+
+                    {{ form_errors(form.duration) }}
+                </div>
+
+                <div class="md:col-span-2">
+                    {{ form_label(form.description, null, {
+                        label_attr: {
+                            class: 'mb-2 block text-sm font-medium text-slate-700'
+                        }
+                    }) }}
+
+                    {{ form_widget(form.description, {
+                        attr: {
+                            rows: 4,
+                            class: 'w-full rounded-lg border border-slate-300 px-4 py-3 text-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20'
+                        }
+                    }) }}
+
+                    {{ form_errors(form.description) }}
+                </div>
+
+                <div>
+                    {{ form_label(form.objective, null, {
+                        label_attr: {
+                            class: 'mb-2 block text-sm font-medium text-slate-700'
+                        }
+                    }) }}
+
+                    {{ form_widget(form.objective, {
+                        attr: {
+                            rows: 4,
+                            class: 'w-full rounded-lg border border-slate-300 px-4 py-3 text-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20'
+                        }
+                    }) }}
+
+                    {{ form_errors(form.objective) }}
+                </div>
+
+                <div>
+                    {{ form_label(form.instruction, null, {
+                        label_attr: {
+                            class: 'mb-2 block text-sm font-medium text-slate-700'
+                        }
+                    }) }}
+
+                    {{ form_widget(form.instruction, {
+                        attr: {
+                            rows: 4,
+                            class: 'w-full rounded-lg border border-slate-300 px-4 py-3 text-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20'
+                        }
+                    }) }}
+
+                    {{ form_errors(form.instruction) }}
+                </div>
+
+            </div>
+
+            {# Exercices associés #}
+            <section class="border-t border-slate-100 pt-7"
+                     data-controller="exercise-selector">
+
+                <div class="mb-5">
+                    <h3 class="text-base font-semibold text-slate-900">
+                        Exercices associés
+                    </h3>
+
+                    <p class="mt-1 text-sm text-slate-500">
+                        Sélectionnez les exercices qui composent cette activité.
+                    </p>
+                </div>
+
+                {# Étiquettes #}
+                <div data-exercise-selector-target="tags" class="mb-4 flex min-h-14 flex-wrap items-center gap-2 rounded-lg border border-slate-200 bg-slate-50 p-3">
+
+                    <span class="text-sm text-slate-400">
+                        Aucun exercice sélectionné.
+                    </span>
+
+                </div>
+
+                <div class="grid grid-cols-1 gap-3 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-end">
+
+                    {# Liste déroulante visible #}
+                    <div class="min-w-0">
+                        <label for="exercise-picker"
+                               class="mb-2 block text-sm font-medium text-slate-700">
+                            Bibliothèque d’exercices
+                        </label>
+
+                        <select id="exercise-picker"
+                                data-exercise-selector-target="picker"
+                                data-action="change->exercise-selector#add"
+                                class="min-h-11 w-full rounded-lg border border-slate-300 bg-white px-4 py-2.5 text-sm text-slate-700 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20">
+
+                            <option value="">
+                                Sélectionner un exercice...
+                            </option>
+
+                        </select>
+                    </div>
+
+                    <button type="button"
+                            class="inline-flex min-h-11 items-center justify-center gap-2 rounded-lg border border-blue-200 bg-blue-50 px-4 py-2.5 text-sm font-semibold text-blue-700 transition-colors hover:bg-blue-100">
+
+                        <span aria-hidden="true">+</span>
+                        Créer un exercice
+                    </button>
+
+                </div>
+
+                {# Champ Symfony réel : conservé pour la soumission #}
+                <div class="hidden">
+                    {{ form_widget(form.exercises, {
+                        attr: {
+                            'data-exercise-selector-target': 'select'
+                        }
+                    }) }}
+                </div>
+
+                {{ form_errors(form.exercises) }}
+
+            </section>
+        </div>
+
+        {# Actions #}
+        <div class="flex flex-col-reverse gap-3 border-t border-slate-100 bg-slate-50 px-4 py-5 sm:flex-row sm:justify-end sm:px-7">
+
+            <a href="{{ path('app_activity_index') }}"
+               class="inline-flex min-h-11 items-center justify-center rounded-lg border border-slate-300 bg-white px-5 py-2.5 text-sm font-medium text-slate-700 hover:bg-slate-100">
+                Annuler
+            </a>
+
+            <button type="submit"
+                    class="inline-flex min-h-11 items-center justify-center rounded-lg bg-blue-600 px-5 py-2.5 text-sm font-semibold text-white hover:bg-blue-700">
+
+                {{ button_label|default('Enregistrer l’activité') }}
+
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+{{ form_end(form) }}

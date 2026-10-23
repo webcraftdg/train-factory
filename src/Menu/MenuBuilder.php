@@ -34,6 +34,11 @@ class MenuBuilder
                 'activePattern' => 'app_bloc',
             ];
             $items[] =  [
+                'label' => 'Activités',
+                'route' => 'app_activity_index',
+                'activePattern' => 'app_activity_',
+            ];
+            $items[] =  [
                 'label' => 'Exercices',
                 'route' => 'app_exercise_index',
                 'activePattern' => 'app_exercise_',

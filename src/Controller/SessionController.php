@@ -30,6 +30,10 @@ final class SessionController extends AbstractController
     }
 
     #[Route('/create', name: 'new', methods: ['GET', 'POST'])]
+      #[PageTitle(
+        title:'Créer une séances',
+        section:'Séances'
+    )]
     public function new(Request $request, EntityManagerInterface $entityManager): Response
     {
         $session = new Session();
@@ -50,6 +54,10 @@ final class SessionController extends AbstractController
     }
 
     #[Route('/{id}/detail', name: 'show', methods: ['GET'])]
+    #[PageTitle(
+        title:'Détail de la séances',
+        section:'Séances'
+    )]
     public function show(Session $session): Response
     {
         return $this->render('session/show.html.twig', [
@@ -58,6 +66,10 @@ final class SessionController extends AbstractController
     }
 
     #[Route('/{id}/edit', name: 'edit', methods: ['GET', 'POST'])]
+    #[PageTitle(
+        title:'&Eacute;diter la séances',
+        section:'Séances'
+    )]
     public function edit(Request $request, Session $session, EntityManagerInterface $entityManager): Response
     {
         $form = $this->createForm(SessionType::class, $session);
@@ -75,7 +87,7 @@ final class SessionController extends AbstractController
         ]);
     }
 
-    #[Route('/{id}', name: 'delete', methods: ['POST'])]
+    #[Route('/{id}/supprimer', name: 'delete', methods: ['POST'])]
     public function delete(Request $request, Session $session, EntityManagerInterface $entityManager): Response
     {
         if ($this->isCsrfTokenValid('delete'.$session->getId(), $request->getPayload()->getString('_token'))) {
