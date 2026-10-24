@@ -22,22 +22,27 @@ class MenuBuilder
     public function build(): array
     {
         $items = [];
-        $items[] = [
-            'label' => 'Séances',
-            'route' => 'app_session_index',
-            'activePattern' => 'app_session',
-        ];
-        $items[] = [
-            'label' => 'Blocs',
-            'route' => 'app_block_index',
-            'activePattern' => 'app_bloc',
-        ];
-        $items[] =  [
-            'label' => 'Exercices',
-            'route' => 'app_exercise_index',
-            'activePattern' => 'app_exercise_',
-        ];
         if ($this->security->isGranted('IS_AUTHENTICATED')) {
+            $items[] = [
+                'label' => 'Séances',
+                'route' => 'app_session_index',
+                'activePattern' => 'app_session',
+            ];
+            $items[] = [
+                'label' => 'Blocs',
+                'route' => 'app_block_index',
+                'activePattern' => 'app_bloc',
+            ];
+            $items[] =  [
+                'label' => 'Activités',
+                'route' => 'app_activity_index',
+                'activePattern' => 'app_activity_',
+            ];
+            $items[] =  [
+                'label' => 'Exercices',
+                'route' => 'app_exercise_index',
+                'activePattern' => 'app_exercise_',
+            ];
             $items[] = [
                 'label' => 'Mon&nbsp;compte',
                 'route' => 'app_account',

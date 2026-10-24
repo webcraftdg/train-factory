@@ -1,0 +1,42 @@
+<table class="w-full table-fixed text-left text-sm">
+
+    <thead class="hidden bg-slate-50 text-slate-600 md:table-header-group">
+        <tr>
+            <th scope="col" class="w-1/4 px-5 py-4 font-semibold">
+                Nom
+            </th>
+            <th scope="col" class="px-5 py-4 font-semibold">
+                Description
+            </th>
+            <th scope="col" class="px-5 py-4 font-semibold">
+                Durée
+            </th>
+            <th scope="col" class="px-5 py-4 font-semibold">
+                Nombre d'activités
+            </th>
+            <th scope="col" class="w-36 px-5 py-4 text-right font-semibold">
+                Actions
+            </th>
+        </tr>
+    </thead>
+
+    <tbody class="divide-y divide-slate-100">
+
+        {% for bloc in blocks %}
+
+            {% include 'block/_item_list.html.twig'
+                    with { bloc: bloc } %}
+
+        {% else %}
+
+            <tr>
+                <td colspan="3"
+                    class="px-5 py-10 text-center text-slate-500">
+                    Aucun exercice disponible.
+                </td>
+            </tr>
+
+        {% endfor %}
+
+    </tbody>
+</table>

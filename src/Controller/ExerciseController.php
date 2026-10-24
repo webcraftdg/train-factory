@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Attribute\PageTitle;
 use App\Entity\Exercise;
 use App\Form\ExerciseType;
 use App\Repository\ExerciseRepository;
@@ -17,6 +18,10 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 final class ExerciseController extends AbstractController
 {
     #[Route(name: 'index', methods: ['GET'])]
+    #[PageTitle(
+        title:'Liste des exercices',
+        section:'Exercices'
+    )]
     public function index(ExerciseRepository $exerciseRepository): Response
     {
         return $this->render('exercise/index.html.twig', [
@@ -24,7 +29,11 @@ final class ExerciseController extends AbstractController
         ]);
     }
 
-    #[Route('/new', name: 'new', methods: ['GET', 'POST'])]
+    #[Route('/creer', name: 'new', methods: ['GET', 'POST'])]
+    #[PageTitle(
+        title:'Créer un exercice',
+        section:'Exercices'
+    )]
     public function new(Request $request, EntityManagerInterface $entityManager): Response
     {
         $exercise = new Exercise();
@@ -44,7 +53,11 @@ final class ExerciseController extends AbstractController
         ]);
     }
 
-    #[Route('/{id}', name: 'show', methods: ['GET'])]
+    #[Route('/{id}/detail', name: 'show', methods: ['GET'])]
+    #[PageTitle(
+        title:'Détail de l\'exercice',
+        section:'Exercices'
+    )]
     public function show(Exercise $exercise): Response
     {
         return $this->render('exercise/show.html.twig', [
@@ -53,6 +66,10 @@ final class ExerciseController extends AbstractController
     }
 
     #[Route('/{id}/edit', name: 'edit', methods: ['GET', 'POST'])]
+    #[PageTitle(
+        title:'&Eacute;diter l\'exercices',
+        section:'Exercices'
+    )]
     public function edit(Request $request, Exercise $exercise, EntityManagerInterface $entityManager): Response
     {
         $form = $this->createForm(ExerciseType::class, $exercise);
@@ -70,7 +87,7 @@ final class ExerciseController extends AbstractController
         ]);
     }
 
-    #[Route('/{id}', name: 'delete', methods: ['POST'])]
+    #[Route('/{id}/supprimer', name: 'delete', methods: ['POST'])]
     public function delete(Request $request, Exercise $exercise, EntityManagerInterface $entityManager): Response
     {
         if ($this->isCsrfTokenValid('delete'.$exercise->getId(), $request->getPayload()->getString('_token'))) {

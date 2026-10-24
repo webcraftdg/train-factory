@@ -52,6 +52,12 @@ class Exercise
     {
         $this->dateCreate = new DateTime();
     }
+    #[ORM\PrePersist]
+    #[ORM\PreUpdate]
+    public function createPosition(): void
+    {
+        $this->position = ($this->position) ?? 0;
+    }
 
     public function __construct()
     {
@@ -148,5 +154,21 @@ class Exercise
         }
 
         return $this;
+    }
+
+    public function __toString()
+    {
+        $name = $this->name ?? '';
+        $description = trim($this->description ?? '');
+
+        if ($description === '') {
+            return $name;
+        }
+
+        return sprintf(
+            '%s — %s',
+            $name,
+            mb_strimwidth($description, 0, 50, '...')
+        );
     }
 }
