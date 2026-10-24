@@ -8,6 +8,8 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use PHPUnit\Framework\Attributes\Group;
+use Symfony\Component\Serializer\Attribute\Groups;
 
 #[ORM\Entity(repositoryClass: ExerciseRepository::class)]
 #[ORM\HasLifecycleCallbacks]
@@ -16,12 +18,15 @@ class Exercise
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(['exercise:create'])]
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(['exercise:create'])]
     private ?string $name = null;
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
+    #[Groups(['exercise:create'])]
     private ?string $description = null;
 
     #[ORM\Column]
@@ -63,7 +68,6 @@ class Exercise
     {
         $this->activities = new ArrayCollection();
     }
-
     public function getId(): ?int
     {
         return $this->id;

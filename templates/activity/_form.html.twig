@@ -131,7 +131,7 @@
 
                 </div>
 
-                <div class="grid grid-cols-1 gap-3 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-end">
+                <div class="grid grid-cols-1 gap-3 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-end" >
 
                     {# Liste déroulante visible #}
                     <div class="min-w-0">
@@ -151,10 +151,12 @@
 
                         </select>
                     </div>
-
-                    <button type="button"
+                    <button
+                            type="button"
+                            data-controller="button-action"
+                            data-button-action-url-value="{{path('app_exercise_async_new')}}"
+                            data-action="click->button-action#open"
                             class="inline-flex min-h-11 items-center justify-center gap-2 rounded-lg border border-blue-200 bg-blue-50 px-4 py-2.5 text-sm font-semibold text-blue-700 transition-colors hover:bg-blue-100">
-
                         <span aria-hidden="true">+</span>
                         Créer un exercice
                     </button>
@@ -195,5 +197,10 @@
     </div>
 
 </div>
-
 {{ form_end(form) }}
+
+{%
+    include 'components/_modalAction.html.twig' with {
+        url:path('app_exercise_async_new')
+    }
+%}
