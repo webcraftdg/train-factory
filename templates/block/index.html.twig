@@ -12,7 +12,7 @@
             Blocs
         </h1>
 
-        <a href="{{ path('app_exercise_new') }}"
+        <a href="{{ path('app_block_new') }}"
            class="inline-flex min-h-11 items-center justify-center
                   rounded-lg bg-blue-600 px-4 py-2 font-medium
                   text-white hover:bg-blue-700">
@@ -22,8 +22,7 @@
     </div>
 
     {# Liste #}
-    <div class="overflow-hidden rounded-xl border
-                border-slate-200 bg-white shadow-sm">
+    <div class="space-y-3">
           {% include 'block/_list.html.twig'
                     with { blocks: blocks } %}
     </div>

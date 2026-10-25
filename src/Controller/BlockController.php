@@ -67,7 +67,7 @@ final class BlockController extends AbstractController
 
     #[Route('/{id}/edit', name: 'edit', methods: ['GET', 'POST'])]
     #[PageTitle(
-        title:'&Eacute;diter un bloc',
+        title:'Editer un bloc',
         section:'Blocs'
     )]
     public function edit(Request $request, Block $block, EntityManagerInterface $entityManager): Response

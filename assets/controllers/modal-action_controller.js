@@ -12,7 +12,7 @@ export default class extends Controller {
         ];
         static values = {
             url:String,
-            eventName: { type: String, default: 'exercise-selector_update'},
+            eventName: { type: String, default: 'items-selector_update'},
         };
 
     connect() {

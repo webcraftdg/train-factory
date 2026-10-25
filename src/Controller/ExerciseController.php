@@ -93,7 +93,7 @@ final class ExerciseController extends AbstractController
 
     #[Route('/{id}/edit', name: 'edit', methods: ['GET', 'POST'])]
     #[PageTitle(
-        title:'&Eacute;diter l\'exercices',
+        title:'Editer l\'exercices',
         section:'Exercices'
     )]
     public function edit(Request $request, Exercise $exercise, EntityManagerInterface $entityManager): Response

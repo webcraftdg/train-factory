@@ -224,4 +224,20 @@ class Block
 
         return $this;
     }
+
+    public function __toString()
+    {
+        $name = $this->name ?? '';
+        $description = trim($this->description ?? '');
+
+        if ($description === '') {
+            return $name;
+        }
+
+        return sprintf(
+            '%s — %s',
+            $name,
+            mb_strimwidth($description, 0, 50, '...')
+        );
+    }
 }

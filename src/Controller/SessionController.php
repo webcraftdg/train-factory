@@ -67,7 +67,7 @@ final class SessionController extends AbstractController
 
     #[Route('/{id}/edit', name: 'edit', methods: ['GET', 'POST'])]
     #[PageTitle(
-        title:'&Eacute;diter la séances',
+        title:'Editer la séances',
         section:'Séances'
     )]
     public function edit(Request $request, Session $session, EntityManagerInterface $entityManager): Response

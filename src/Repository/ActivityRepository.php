@@ -4,6 +4,7 @@ namespace App\Repository;
 
 use App\Entity\Activity;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -16,28 +17,26 @@ class ActivityRepository extends ServiceEntityRepository
         parent::__construct($registry, Activity::class);
     }
 
-//    /**
-//     * @return Activity[] Returns an array of Activity objects
-//     */
-//    public function findByExampleField($value): array
-//    {
-//        return $this->createQueryBuilder('a')
-//            ->andWhere('a.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->orderBy('a.id', 'ASC')
-//            ->setMaxResults(10)
-//            ->getQuery()
-//            ->getResult()
-//        ;
-//    }
 
-//    public function findOneBySomeField($value): ?Activity
-//    {
-//        return $this->createQueryBuilder('a')
-//            ->andWhere('a.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->getQuery()
-//            ->getOneOrNullResult()
-//        ;
-//    }
+      /**
+     * create query build with condition and orderby
+     *
+     * @param  array                      $params
+     * @param  array                      $orderBy
+     *
+     * @return \Doctrine\ORM\QueryBuilder
+     */
+    public function createQueryFindWithConditions(array $params = [], array $orderBy = ['a.name' => 'ASC']) : QueryBuilder
+    {
+        $querybuilder = $this->createQueryBuilder('a');
+        foreach($params as $field => $value) {
+            $conditionalAttribute = ':'.$field;
+            $querybuilder->andWhere($field.'='.$conditionalAttribute)
+            ->setParameter($field, $value);
+        }
+        foreach($orderBy as $field => $order) {
+            $querybuilder->addOrderBy($field, $order);
+        }
+        return $querybuilder;
+    }
 }

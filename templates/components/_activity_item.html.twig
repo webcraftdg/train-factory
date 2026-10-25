@@ -51,6 +51,20 @@
 
             <div class="flex shrink-0 items-center gap-2
                         text-sm font-medium text-blue-600">
+                 <a href="{{ path('app_activity_edit', {id: activity.id}) }}"
+                    aria-label="Modifier {{ activity.name }}"
+                    title="Modifier {{ activity.name }}"
+                    onclick="event.stopPropagation()"
+                    class="inline-flex min-h-10 min-w-10 items-center justify-center rounded-lg text-blue-600 transition-colors hover:bg-blue-50">
+
+                    <span data-controller="svg"
+                        data-svg-name-value="edit"
+                        class="inline-flex items-center justify-center"
+                        aria-hidden="true">
+                    </span>
+
+                </a>
+
 
                 <span class="hidden sm:inline group-open:hidden">
                     Déployer
@@ -195,27 +209,6 @@
             </div>
 
         </div>
-
-        {# Actions #}
-        <div class="mt-6 flex flex-wrap items-center
-                    justify-end gap-3
-                    border-t border-slate-100 pt-5">
-
-            <a href="{{ path('app_activity_edit', {
-                id: activity.id
-            }) }}"
-               class="inline-flex min-h-10 items-center
-                      justify-center gap-2 rounded-lg
-                      border border-slate-300
-                      bg-white px-4 py-2
-                      text-sm font-medium text-slate-700
-                      transition-colors hover:bg-slate-100">
-
-                Modifier
-            </a>
-
-        </div>
-
     </div>
 
 </details>
