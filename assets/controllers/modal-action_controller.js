@@ -11,7 +11,8 @@ export default class extends Controller {
             'modal', 'dialog', 'buttonClose', 'content'
         ];
         static values = {
-            url:String
+            url:String,
+            eventName: { type: String, default: 'exercise-selector_update'},
         };
 
     connect() {
@@ -23,7 +24,7 @@ export default class extends Controller {
             if (this.urlValue) {
                 const response = await fetch(this.urlValue, {method:'GET'});
                 if (!response.ok) {
-                    throw new Error("Erreur HTTP ${response.status}");
+                    throw new Error(`Erreur HTTP ${response.status}`);
                 }
                 const html  = await response.text();
                 if(this.dialogTarget && this.contentTarget) {
@@ -31,7 +32,7 @@ export default class extends Controller {
                     this.dialogTarget.showModal();
                     const form = this.contentTarget.querySelector('form');
                     if (form) {
-                        this.subscripeForm(form);
+                        this.subscribeForm(form);
                     }
                 }
             }
@@ -67,7 +68,12 @@ export default class extends Controller {
 
         if (response.status === 201) {
             const result = await response.json();
-            console.log(result);
+            if (result) {
+                this.dispatch(this.eventNameValue, {
+                    detail: result
+                });
+            }
+
             this.close();
         }
     }
@@ -89,7 +95,7 @@ export default class extends Controller {
         }
     }
 
-    subscripeForm(form) {
+    subscribeForm(form) {
         form?.addEventListener('submit', this.submit.bind(this));
     }
 }

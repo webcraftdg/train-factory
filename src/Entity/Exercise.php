@@ -10,6 +10,7 @@ use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use PHPUnit\Framework\Attributes\Group;
 use Symfony\Component\Serializer\Attribute\Groups;
+use Symfony\Component\Validator\Constraints\NotBlank;
 
 #[ORM\Entity(repositoryClass: ExerciseRepository::class)]
 #[ORM\HasLifecycleCallbacks]
@@ -23,10 +24,12 @@ class Exercise
 
     #[ORM\Column(length: 255)]
     #[Groups(['exercise:create'])]
+    #[NotBlank(message:'Le nom est obligatoire', groups:['exercise:create', 'exercise:update'])]
     private ?string $name = null;
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     #[Groups(['exercise:create'])]
+    #[NotBlank(message:'Le nom est obligatoire', groups:['exercise:create', 'exercise:update'])]
     private ?string $description = null;
 
     #[ORM\Column]

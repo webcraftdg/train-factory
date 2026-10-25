@@ -57,6 +57,17 @@ export default class extends Controller {
         this.render();
     }
 
+    updateSelect(event) {
+        if (event.detail?.id && event.detail?.name) {
+            const option = document.createElement("option");
+            option.value = event.detail.id;
+            option.text = event.detail.name;
+            option.selected = true;
+            this.selectTarget.add(option, null);
+            this.render();
+        }
+    }
+
     render() {
         this.renderTags();
         this.renderPicker();
