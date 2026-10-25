@@ -68,6 +68,18 @@ class Block
         $this->dateCreate = new DateTime();
     }
 
+    #[ORM\PrePersist]
+    #[ORM\PreUpdate]
+    public function updateDuration(): void
+    {
+        $durations = $this->getActivities()->reduce(
+            fn(int $total, Activity $activity) =>
+                $total + (int) $activity->getDurationInMinutes(),
+            0
+        );
+        $this->setDuration($durations);
+    }
+
     public function __construct()
     {
         $this->sessions = new ArrayCollection();

@@ -9,6 +9,8 @@ use App\Repository\ActivityRepository;
 use App\Repository\BlockRepository;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\TextareaType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -17,10 +19,10 @@ class BlockType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('name')
-            ->add('description')
-            ->add('objective')
-            ->add('instruction')
+            ->add('name', TextType::class, ['label' => 'Nom'])
+            ->add('description', TextareaType::class, ['label' => 'Description'])
+            ->add('objective', TextareaType::class, ['label' => 'Objectif'])
+            ->add('instruction', TextareaType::class, ['label' => 'Consigne'])
             ->add('activities', EntityType::class, [
                 'class' => Activity::class,
                 'label'  => 'Choix des activités',
