@@ -9,8 +9,9 @@
         Modifier l’exercice
     </h1>
 
-    {% include 'exercise/_form.html.twig' with {
+    {% include 'components/_form-exercices.html.twig' with {
         form: form,
+        action:action,
         form_title: 'Modification de l’exercice',
         button_label: 'Enregistrer les modifications'
     } only %}

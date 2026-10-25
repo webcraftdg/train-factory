@@ -68,6 +68,18 @@ class Block
         $this->dateCreate = new DateTime();
     }
 
+    #[ORM\PrePersist]
+    #[ORM\PreUpdate]
+    public function updateDuration(): void
+    {
+        $durations = $this->getActivities()->reduce(
+            fn(int $total, Activity $activity) =>
+                $total + (int) $activity->getDurationInMinutes(),
+            0
+        );
+        $this->setDuration($durations);
+    }
+
     public function __construct()
     {
         $this->sessions = new ArrayCollection();
@@ -223,5 +235,21 @@ class Block
         $this->activities->removeElement($activity);
 
         return $this;
+    }
+
+    public function __toString()
+    {
+        $name = $this->name ?? '';
+        $description = trim($this->description ?? '');
+
+        if ($description === '') {
+            return $name;
+        }
+
+        return sprintf(
+            '%s — %s',
+            $name,
+            mb_strimwidth($description, 0, 50, '...')
+        );
     }
 }

@@ -7,8 +7,9 @@
         Créer un exercice
     </h1>
 
-    {% include 'exercise/_form.html.twig' with {
+    {% include 'components/_form-exercices.html.twig' with {
         form: form,
+        action:action,
         form_title: 'Nouvel exercice',
         button_label: 'Créer l’exercice'
     } only %}

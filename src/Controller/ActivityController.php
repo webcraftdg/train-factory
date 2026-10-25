@@ -7,6 +7,7 @@ use App\Form\ActivityType;
 use App\Repository\ActivityRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -41,6 +42,7 @@ final class ActivityController extends AbstractController
         return $this->render('activity/new.html.twig', [
             'activity' => $activity,
             'form' => $form,
+            'action' => $this->generateUrl('app_activity_new')
         ]);
     }
 
@@ -48,6 +50,14 @@ final class ActivityController extends AbstractController
     public function show(Activity $activity): Response
     {
         return $this->render('activity/show.html.twig', [
+            'activity' => $activity,
+        ]);
+    }
+
+    #[Route('/{id}/asyn-detail', name: 'async_show', methods: ['GET'])]
+    public function asyncShow(Activity $activity): Response
+    {
+        return $this->render('components/_activity_item.html.twig', [
             'activity' => $activity,
         ]);
     }
@@ -70,8 +80,34 @@ final class ActivityController extends AbstractController
         return $this->render('activity/edit.html.twig', [
             'activity' => $activity,
             'form' => $form,
+            'action' => $this->generateUrl('app_activity_edit', ['id' => $activity->getId()])
         ]);
     }
+
+    #[Route('/async-creer', name: 'async_new', methods: ['GET', 'POST'])]
+    public function newAsync(Request $request, EntityManagerInterface $entityManager): Response
+    {
+        $activity = new Activity();
+        $form = $this->createForm(ActivityType::class, $activity);
+        $form->handleRequest($request);
+        $response = null;
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $entityManager->persist($activity);
+            $entityManager->flush();
+            $response = $this->json($activity, JsonResponse::HTTP_CREATED, context:['groups' => ['activity:create']]);
+        }
+        if ($response === null) {
+            $response =  $this->render('components/_form-activity.html.twig', [
+                'form' => $form,
+                'activeCreate' => false,
+                'action' => $this->generateUrl('app_activity_async_new')
+            ]);
+        }
+
+        return $response;
+    }
+
 
     #[Route('/{id}/supprimer', name: 'delete', methods: ['POST'])]
     public function delete(Request $request, Activity $activity, EntityManagerInterface $entityManager): Response

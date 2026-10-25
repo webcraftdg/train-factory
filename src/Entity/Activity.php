@@ -8,6 +8,8 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Attribute\Groups;
+use Symfony\Component\Validator\Constraints\Regex;
 
 #[ORM\Entity(repositoryClass: ActivityRepository::class)]
 #[ORM\HasLifecycleCallbacks]
@@ -16,12 +18,15 @@ class Activity
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(['activity:create'])]
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(['activity:create'])]
     private ?string $name = null;
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
+    #[Groups(['activity:create'])]
     private ?string $description = null;
 
       #[ORM\Column(type: Types::TEXT, nullable: true)]
@@ -31,6 +36,10 @@ class Activity
     private ?string $instruction = null;
 
     #[ORM\Column(length: 20)]
+    #[Regex(
+        pattern: '/^(?:\d+|\d\[\d\+\d\])$/',
+        message: 'La durée doit être un nombre ou respecter le format 2[2+1].'
+    )]
     private ?string $duration = null;
 
     #[ORM\Column]
@@ -69,6 +78,27 @@ class Activity
     public function createTimestamp(): void
     {
         $this->dateCreate = new DateTime();
+    }
+
+    #[ORM\PrePersist]
+    #[ORM\PreUpdate]
+    public function createPosition(): void
+    {
+        $this->position = ($this->position) ?? 0;
+    }
+
+    public function getDurationInMinutes(): int
+    {
+        $duration = $this->getDuration();
+        $value = 0;
+        if (ctype_digit($duration)) {
+            $value =  (int) $duration;
+        }
+
+        if (preg_match('/^(\d+)\[(\d+)\+(\d+)\]$/', $duration, $matches)) {
+            $value =  (int) $matches[1] * ((int) $matches[2] + (int) $matches[3]);
+        }
+        return $value;
     }
 
     public function __construct()
@@ -239,5 +269,21 @@ class Activity
         }
 
         return $this;
+    }
+
+    public function __toString()
+    {
+        $name = $this->name ?? '';
+        $description = trim($this->description ?? '');
+
+        if ($description === '') {
+            return $name;
+        }
+
+        return sprintf(
+            '%s — %s',
+            $name,
+            mb_strimwidth($description, 0, 50, '...')
+        );
     }
 }

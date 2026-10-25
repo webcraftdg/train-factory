@@ -1,4 +1,7 @@
-{{ form_start(form) }}
-    {{ form_widget(form) }}
-    <button class="btn">{{ button_label|default('Save') }}</button>
-{{ form_end(form) }}
+{%
+    include 'components/_form-block.html.twig' with {form:form, activeCreate:true}
+%}
+{%
+    include 'components/_modalAction.html.twig'
+%}
+
