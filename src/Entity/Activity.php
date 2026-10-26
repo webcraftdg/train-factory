@@ -15,6 +15,8 @@ use Symfony\Component\Validator\Constraints\Regex;
 #[ORM\HasLifecycleCallbacks]
 class Activity
 {
+    const ACTIVITY_HYDRATATION_DURATION = 2;
+
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
@@ -40,10 +42,10 @@ class Activity
         pattern: '/^(?:\d+|\d\[\d\+\d\])$/',
         message: 'La durée doit être un nombre ou respecter le format 2[2+1].'
     )]
-    private ?string $duration = null;
+    private ?string $duration = '';
 
-    #[ORM\Column]
-    private ?int $position = null;
+    #[ORM\Column(options:['default' => 0])]
+    private ?int $position = 0;
 
     /**
      * @var Collection<int, Exercise>
@@ -65,6 +67,9 @@ class Activity
      */
     #[ORM\ManyToMany(targetEntity: Block::class, mappedBy: 'activities')]
     private Collection $blocks;
+
+    #[ORM\Column(options:['default' => false])]
+    private ?bool $hydration = false;
 
 
     #[ORM\PrePersist]
@@ -97,6 +102,9 @@ class Activity
 
         if (preg_match('/^(\d+)\[(\d+)\+(\d+)\]$/', $duration, $matches)) {
             $value =  (int) $matches[1] * ((int) $matches[2] + (int) $matches[3]);
+        }
+        if ($this->isHydration() === true) {
+            $value += self::ACTIVITY_HYDRATATION_DURATION;
         }
         return $value;
     }
@@ -285,5 +293,22 @@ class Activity
             $name,
             mb_strimwidth($description, 0, 50, '...')
         );
+    }
+
+    public function isHydration(): ?bool
+    {
+        return $this->hydration;
+    }
+
+    public function setHydration(bool $hydration): static
+    {
+        $this->hydration = $hydration;
+
+        return $this;
+    }
+
+    public function canBeArchived()
+    {
+        return $this->blocks->isEmpty() && $this->dateArchived === null;
     }
 }

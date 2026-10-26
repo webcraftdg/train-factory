@@ -4,6 +4,7 @@ namespace App\Repository;
 
 use App\Entity\Session;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -16,28 +17,42 @@ class SessionRepository extends ServiceEntityRepository
         parent::__construct($registry, Session::class);
     }
 
-//    /**
-//     * @return Session[] Returns an array of Session objects
-//     */
-//    public function findByExampleField($value): array
-//    {
-//        return $this->createQueryBuilder('s')
-//            ->andWhere('s.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->orderBy('s.id', 'ASC')
-//            ->setMaxResults(10)
-//            ->getQuery()
-//            ->getResult()
-//        ;
-//    }
 
-//    public function findOneBySomeField($value): ?Session
-//    {
-//        return $this->createQueryBuilder('s')
-//            ->andWhere('s.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->getQuery()
-//            ->getOneOrNullResult()
-//        ;
-//    }
+    /**
+     * create query build with condition and orderby
+     *
+     * @param  array                      $params
+     * @param  array                      $orderBy
+     *
+     * @return \Doctrine\ORM\QueryBuilder
+     */
+    public function createQueryFindWithConditions(array $params = [], array $orderBy = ['s.name' => 'ASC']) : QueryBuilder
+    {
+        $querybuilder = $this->prepareQueryBuilder();
+        foreach($params as $field => $value) {
+            $conditionalAttribute = ':'.$field;
+            $querybuilder->andWhere($field.'='.$conditionalAttribute)
+            ->setParameter($field, $value);
+        }
+        foreach($orderBy as $field => $order) {
+            $querybuilder->addOrderBy($field, $order);
+        }
+        return $querybuilder;
+    }
+
+    /**
+     * prepare query builder
+     *
+     * @param  bool                       $displayArchived
+     *
+     * @return \Doctrine\ORM\QueryBuilder
+     */
+    private function prepareQueryBuilder(bool $displayArchived = false) : QueryBuilder
+    {
+        $querybuilder = $this->createQueryBuilder('s');
+        if ($displayArchived === false) {
+            $querybuilder->andWhere('s.dateArchived IS NULL');
+        }
+        return $querybuilder;
+    }
 }

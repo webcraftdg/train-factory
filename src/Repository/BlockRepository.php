@@ -27,7 +27,7 @@ class BlockRepository extends ServiceEntityRepository
      */
     public function createQueryFindWithConditions(array $params = [], array $orderBy = ['b.name' => 'ASC']) : QueryBuilder
     {
-        $querybuilder = $this->createQueryBuilder('b');
+        $querybuilder = $this->prepareQueryBuilder();
         foreach($params as $field => $value) {
             $conditionalAttribute = ':'.$field;
             $querybuilder->andWhere($field.'='.$conditionalAttribute)
@@ -35,6 +35,22 @@ class BlockRepository extends ServiceEntityRepository
         }
         foreach($orderBy as $field => $order) {
             $querybuilder->addOrderBy($field, $order);
+        }
+        return $querybuilder;
+    }
+
+    /**
+     * prepare query builder
+     *
+     * @param  bool                       $displayArchived
+     *
+     * @return \Doctrine\ORM\QueryBuilder
+     */
+    private function prepareQueryBuilder(bool $displayArchived = false) : QueryBuilder
+    {
+        $querybuilder = $this->createQueryBuilder('b');
+        if ($displayArchived === false) {
+            $querybuilder->andWhere('b.dateArchived IS NULL');
         }
         return $querybuilder;
     }

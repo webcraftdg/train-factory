@@ -4,8 +4,10 @@ namespace App\Controller;
 
 use App\Attribute\PageTitle;
 use App\Entity\Block;
+use App\Entity\User;
 use App\Form\BlockType;
 use App\Repository\BlockRepository;
+use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -26,7 +28,7 @@ final class BlockController extends AbstractController
     public function index(BlockRepository $blockRepository): Response
     {
         return $this->render('block/index.html.twig', [
-            'blocks' => $blockRepository->findAll(),
+            'blocks' => $blockRepository->createQueryFindWithConditions()->getQuery()->getResult(),
         ]);
     }
 
@@ -122,14 +124,14 @@ final class BlockController extends AbstractController
         ]);
     }
 
-    #[Route('/{id}/supprimer', name: 'delete', methods: ['POST'])]
-    public function delete(Request $request, Block $block, EntityManagerInterface $entityManager): Response
-    {
-        if ($this->isCsrfTokenValid('delete'.$block->getId(), $request->getPayload()->getString('_token'))) {
-            $entityManager->remove($block);
-            $entityManager->flush();
-        }
 
+    #[Route('/{id}/archiver', name: 'archived', methods: ['GET'])]
+    #[IsGranted(User::ROLE_ADMIN)]
+    public function archived(Block $block, EntityManagerInterface $entityManager): Response
+    {
+        $block->setDateArchived(new DateTime());
+        $entityManager->persist($block);
+        $entityManager->flush();
         return $this->redirectToRoute('app_block_index', [], Response::HTTP_SEE_OTHER);
     }
 }

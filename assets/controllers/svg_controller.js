@@ -23,8 +23,12 @@ export default class extends Controller {
 
         let svg = await response.text();
 
-        svg = svg.replace('<svg', `<svg width="${this.widthValue}" height="${this.heightValue}"`);
+        const template = document.createElement('template');
+        template.innerHTML = svg.trim();
+        const finalSvg = template.content.querySelector('svg');
+        finalSvg.setAttribute('width', this.widthValue);
+        finalSvg.setAttribute('height', this.heightValue);
 
-        this.element.innerHTML = svg;
+        this.element.innerHTML = finalSvg.outerHTML;
     }
 }
