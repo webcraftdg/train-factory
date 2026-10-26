@@ -113,7 +113,7 @@
                     inputPlaceholder: 'Sélectionner une activité',
                     buttonActionUrl :'app_activity_async_new',
                     buttonActionLabel:'Ajouter une activité',
-                    activeCreate:true
+                    activeCreate:(activeCreate | default(false))
                 }%}
 
                 {# Champ Symfony réel : conservé pour la soumission #}
