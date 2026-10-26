@@ -4,8 +4,10 @@ namespace App\Controller;
 
 use App\Attribute\PageTitle;
 use App\Entity\Exercise;
+use App\Entity\User;
 use App\Form\ExerciseType;
 use App\Repository\ExerciseRepository;
+use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -26,7 +28,7 @@ final class ExerciseController extends AbstractController
     public function index(ExerciseRepository $exerciseRepository): Response
     {
         return $this->render('exercise/index.html.twig', [
-            'exercises' => $exerciseRepository->findAll(),
+            'exercises' => $exerciseRepository->createQueryFindWithConditions()->getQuery()->getResult(),
         ]);
     }
 
@@ -79,18 +81,6 @@ final class ExerciseController extends AbstractController
         return $response;
     }
 
-    #[Route('/{id}/detail', name: 'show', methods: ['GET'])]
-    #[PageTitle(
-        title:'Détail de l\'exercice',
-        section:'Exercices'
-    )]
-    public function show(Exercise $exercise): Response
-    {
-        return $this->render('exercise/show.html.twig', [
-            'exercise' => $exercise,
-        ]);
-    }
-
     #[Route('/{id}/edit', name: 'edit', methods: ['GET', 'POST'])]
     #[PageTitle(
         title:'Editer l\'exercices',
@@ -114,14 +104,13 @@ final class ExerciseController extends AbstractController
         ]);
     }
 
-    #[Route('/{id}/supprimer', name: 'delete', methods: ['POST'])]
-    public function delete(Request $request, Exercise $exercise, EntityManagerInterface $entityManager): Response
+    #[Route('/{id}/archiver', name: 'archived', methods: ['GET'])]
+    #[IsGranted(User::ROLE_ADMIN)]
+    public function archived(Request $request, Exercise $exercise, EntityManagerInterface $entityManager): Response
     {
-        if ($this->isCsrfTokenValid('delete'.$exercise->getId(), $request->getPayload()->getString('_token'))) {
-            $entityManager->remove($exercise);
-            $entityManager->flush();
-        }
-
+        $exercise->setDateArchived(new DateTime());
+        $entityManager->persist($exercise);
+        $entityManager->flush();
         return $this->redirectToRoute('app_exercise_index', [], Response::HTTP_SEE_OTHER);
     }
 }

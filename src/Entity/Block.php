@@ -252,4 +252,9 @@ class Block
             mb_strimwidth($description, 0, 50, '...')
         );
     }
+
+    public function canBeArchived()
+    {
+        return $this->sessions->isEmpty() && $this->dateArchived === null;
+    }
 }

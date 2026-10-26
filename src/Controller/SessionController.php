@@ -4,8 +4,10 @@ namespace App\Controller;
 
 use App\Attribute\PageTitle;
 use App\Entity\Session;
+use App\Entity\User;
 use App\Form\SessionType;
 use App\Repository\SessionRepository;
+use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -25,7 +27,7 @@ final class SessionController extends AbstractController
     public function index(SessionRepository $sessionRepository): Response
     {
         return $this->render('session/index.html.twig', [
-            'sessions' => $sessionRepository->findAll(),
+            'sessions' => $sessionRepository->createQueryFindWithConditions()->getQuery()->getResult(),
         ]);
     }
 
@@ -87,14 +89,13 @@ final class SessionController extends AbstractController
         ]);
     }
 
-    #[Route('/{id}/supprimer', name: 'delete', methods: ['POST'])]
-    public function delete(Request $request, Session $session, EntityManagerInterface $entityManager): Response
+    #[Route('/{id}/archiver', name: 'archived', methods: ['GET'])]
+    #[IsGranted(User::ROLE_ADMIN)]
+    public function archived(Session $session, EntityManagerInterface $entityManager): Response
     {
-        if ($this->isCsrfTokenValid('delete'.$session->getId(), $request->getPayload()->getString('_token'))) {
-            $entityManager->remove($session);
-            $entityManager->flush();
-        }
-
+        $session->setDateArchived(new DateTime());
+        $entityManager->persist($session);
+        $entityManager->flush();
         return $this->redirectToRoute('app_session_index', [], Response::HTTP_SEE_OTHER);
     }
 }

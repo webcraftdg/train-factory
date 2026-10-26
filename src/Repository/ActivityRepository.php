@@ -17,7 +17,6 @@ class ActivityRepository extends ServiceEntityRepository
         parent::__construct($registry, Activity::class);
     }
 
-
       /**
      * create query build with condition and orderby
      *
@@ -28,7 +27,7 @@ class ActivityRepository extends ServiceEntityRepository
      */
     public function createQueryFindWithConditions(array $params = [], array $orderBy = ['a.name' => 'ASC']) : QueryBuilder
     {
-        $querybuilder = $this->createQueryBuilder('a');
+        $querybuilder = $this->prepareQueryBuilder();
         foreach($params as $field => $value) {
             $conditionalAttribute = ':'.$field;
             $querybuilder->andWhere($field.'='.$conditionalAttribute)
@@ -36,6 +35,23 @@ class ActivityRepository extends ServiceEntityRepository
         }
         foreach($orderBy as $field => $order) {
             $querybuilder->addOrderBy($field, $order);
+        }
+        return $querybuilder;
+    }
+
+
+    /**
+     * prepare query builder
+     *
+     * @param  bool                       $displayArchived
+     *
+     * @return \Doctrine\ORM\QueryBuilder
+     */
+    private function prepareQueryBuilder(bool $displayArchived = false) : QueryBuilder
+    {
+        $querybuilder = $this->createQueryBuilder('a');
+        if ($displayArchived === false) {
+            $querybuilder->andWhere('a.dateArchived IS NULL');
         }
         return $querybuilder;
     }

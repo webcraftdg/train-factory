@@ -47,6 +47,9 @@ class Exercise
     #[ORM\ManyToMany(targetEntity: Activity::class, mappedBy: 'exercises')]
     private Collection $activities;
 
+    #[ORM\Column(nullable: true)]
+    private ?\DateTime $dateArchived = null;
+
 
     #[ORM\PrePersist]
     #[ORM\PreUpdate]
@@ -177,5 +180,22 @@ class Exercise
             $name,
             mb_strimwidth($description, 0, 50, '...')
         );
+    }
+
+    public function getDateArchived(): ?\DateTime
+    {
+        return $this->dateArchived;
+    }
+
+    public function setDateArchived(?\DateTime $dateArchived): static
+    {
+        $this->dateArchived = $dateArchived;
+
+        return $this;
+    }
+
+    public function canBeArchived()
+    {
+        return $this->getActivities()->isEmpty() && $this->dateArchived === null;
     }
 }

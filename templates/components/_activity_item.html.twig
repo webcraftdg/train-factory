@@ -2,7 +2,10 @@
 <details class="group overflow-hidden rounded-xl
                 border border-slate-200 bg-white
                 shadow-sm transition-shadow
-                open:shadow-md">
+                open:shadow-md"
+    data-controller="archived"
+    data-archived-context-name-value="{{ activity.name}}"
+                >
 
     {# Version réduite #}
     <summary class="flex cursor-pointer list-none
@@ -29,6 +32,23 @@
                             Durée : {{ activity.duration }}
                         </span>
                     {% endif %}
+                    {% if activity.hydration %}
+                        <span class="inline-flex items-center gap-1.5 rounded-md
+                                    bg-cyan-50 px-2.5 py-1 text-xs font-medium
+                                    text-cyan-700 ring-1 ring-inset ring-cyan-200"
+                            title="Pause hydratation de 2 minutes">
+
+                            <i
+                                data-controller="svg"
+                                data-svg-name-value="goutte"
+                                data-svg-width-value="20"
+                                data-svg-height-value="20"
+                                aria-hidden="true"></i>
+                            Hydratation +2 min
+                        </span>
+                    {% endif %}
+
+
 
                     <span class="rounded-md bg-slate-100
                                  px-2.5 py-1 text-xs
@@ -62,8 +82,23 @@
                         class="inline-flex items-center justify-center"
                         aria-hidden="true">
                     </span>
-
                 </a>
+                {% if (is_granted('ROLE_ADMIN') and activity.canBeArchived) %}
+                    <a href="{{ path('app_activity_archived', {id: activity.id}) }}"
+                        data-action="click->archived#confirmDelete"
+                        data-turbo-prefetch="false"
+                        aria-label="Archiver {{ activity.name }}"
+                        title="Archiver {{ activity.name }}"
+                        class="inline-flex min-h-10 items-center gap-2
+                                rounded-lg px-3 py-2 font-medium
+                                text-orange-600 hover:bg-orange-50">
+                        <span data-controller="svg"
+                            data-svg-name-value="archive"
+                            class="inline-flex  items-center justify-center"
+                            aria-hidden="true">
+                        </span>
+                    </a>
+                {% endif %}
 
 
                 <span class="hidden sm:inline group-open:hidden">

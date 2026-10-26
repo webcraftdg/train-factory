@@ -1,4 +1,7 @@
-<tr class="block p-4 transition-colors
+<tr
+data-controller="archived"
+data-archived-context-name-value="{{ exercise.name}}"
+class="block p-4 transition-colors
             hover:bg-slate-50
             md:table-row md:p-0">
 
@@ -18,6 +21,7 @@
         <a href="{{ path('app_exercise_edit', {id: exercise.id}) }}"
         aria-label="&Eacute;diter {{ exercise.name }}"
         title="&Eacute;diter {{ exercise.name }}"
+        data-turbo-prefetch="false"
         class="inline-flex min-h-10 items-center gap-2
                 rounded-lg px-3 py-2 font-medium
                 text-blue-600 hover:bg-blue-50">
@@ -27,6 +31,22 @@
                 aria-hidden="true">
             </span>
         </a>
+        {% if (is_granted('ROLE_ADMIN') and exercise.canBeArchived) %}
+            <a href="{{ path('app_exercise_archived', {id: exercise.id}) }}"
+            data-action="click->archived#confirmDelete"
+            data-turbo-prefetch="false"
+            aria-label="Archiver {{ exercise.name }}"
+            title="Archiver {{ exercise.name }}"
+            class="inline-flex min-h-10 items-center gap-2
+                    rounded-lg px-3 py-2 font-medium
+                    text-orange-600 hover:bg-orange-50">
+                <span data-controller="svg"
+                    data-svg-name-value="archive"
+                    class="inline-flex  items-center justify-center"
+                    aria-hidden="true">
+                </span>
+            </a>
+        {% endif %}
 
     </td>
 </tr>

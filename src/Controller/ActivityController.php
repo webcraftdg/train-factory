@@ -3,8 +3,10 @@
 namespace App\Controller;
 
 use App\Entity\Activity;
+use App\Entity\User;
 use App\Form\ActivityType;
 use App\Repository\ActivityRepository;
+use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -21,7 +23,7 @@ final class ActivityController extends AbstractController
     public function index(ActivityRepository $activityRepository): Response
     {
         return $this->render('activity/index.html.twig', [
-            'activities' => $activityRepository->findAll(),
+            'activities' => $activityRepository->createQueryFindWithConditions()->getQuery()->getResult(),
         ]);
     }
 
@@ -108,15 +110,13 @@ final class ActivityController extends AbstractController
         return $response;
     }
 
-
-    #[Route('/{id}/supprimer', name: 'delete', methods: ['POST'])]
-    public function delete(Request $request, Activity $activity, EntityManagerInterface $entityManager): Response
+    #[Route('/{id}/archiver', name: 'archived', methods: ['GET'])]
+    #[IsGranted(User::ROLE_ADMIN)]
+    public function archived(Activity $activity, EntityManagerInterface $entityManager): Response
     {
-        if ($this->isCsrfTokenValid('delete'.$activity->getId(), $request->getPayload()->getString('_token'))) {
-            $entityManager->remove($activity);
-            $entityManager->flush();
-        }
-
+        $activity->setDateArchived(new DateTime());
+        $entityManager->persist($activity);
+        $entityManager->flush();
         return $this->redirectToRoute('app_activity_index', [], Response::HTTP_SEE_OTHER);
     }
 }
