@@ -1,17 +1,23 @@
 
 import { Controller } from '@hotwired/stimulus';
+import Sortable from 'sortablejs';
 
 export default class extends Controller {
-    static targets = ['select', 'picker', 'tags', 'cards'];
+    static targets = ['select', 'picker', 'tags', 'cards', 'order'];
 
     static values = {
         mode: { type: String, default: 'tags' },
+        draggable: {type:Boolean, default: false},
         url: String
     };
     initialSelection = [];
+    sortingSelectionIds = [];
+    sortable = null;
+    containerTarget = null;
     connect() {
          Array.from(this.selectTarget.selectedOptions).forEach((option) => {
             this.initialSelection.push(option.value);
+            this.sortingSelectionIds.push(option.value);
          });
         console.log(this.initialSelection);
         if (this.modeValue === 'tags') {
@@ -21,7 +27,30 @@ export default class extends Controller {
             this.tagsTarget.classList.add('hidden');;
             this.cardsTarget.classList.remove('hidden');;
         }
+        if (this.draggableValue === true) {
+            this.containerTarget = this.cardsTarget;
+            if (this.modeValue === 'tags') {
+                this.containerTarget = this.tagsTarget;
+            }
+            this.sortable = Sortable.create(this.containerTarget, {
+                animation: 150,
+                onEnd: () => this.updateOrder()
+            });
+        }
+
         this.render();
+    }
+
+    updateOrder() {
+        this.sortingSelectionIds = Array.from(
+            this.containerTarget.querySelectorAll('[data-item-id]')
+        ).map(element => Number(element.dataset.itemId));
+
+        this.orderTarget.value = JSON.stringify(this.sortingSelectionIds);
+    }
+
+    disconnect() {
+        this.sortable?.destroy();
     }
 
     add() {
@@ -36,6 +65,7 @@ export default class extends Controller {
 
         if (option) {
             option.selected = true;
+            this.sortingSelection.push(option.value);
         }
 
         this.pickerTarget.value = '';
@@ -51,6 +81,8 @@ export default class extends Controller {
 
         if (option) {
             option.selected = false;
+            const index = this.sortingSelection.indexOf(option.value);
+            this.sortingSelection.splice(index, 1);
         }
 
         this.render();
@@ -59,6 +91,7 @@ export default class extends Controller {
         Array.from(this.selectTarget.options).forEach((option) => {
             option.selected = false;
         });
+        this.sortingSelection.splice(0, this.sortingSelection.length);
         this.render();
     }
 
@@ -115,6 +148,10 @@ export default class extends Controller {
 
             label.className = 'min-w-0 break-words';
             label.textContent = option.textContent.trim();
+            if (Boolean(this.draggableValue) === true) {
+                tag.setAttribute('draggable', 'true');
+            }
+            tag.dataset.itemId = option.value;
 
             const removeButton = document.createElement('button');
 
@@ -168,6 +205,8 @@ export default class extends Controller {
                 const container = document.createElement('div');
                 container.classList.add('w-full');
                 container.classList.add('relative');
+                container.dataset.itemId = option.value;
+
                 container.innerHTML = html;
                 const removeButton = document.createElement('button');
                 removeButton.type = 'button';
@@ -220,4 +259,5 @@ export default class extends Controller {
                 this.pickerTarget.appendChild(item);
             });
     }
+
 }

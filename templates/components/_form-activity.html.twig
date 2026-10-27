@@ -136,9 +136,14 @@
             <section
                     class="border-t border-slate-100 pt-7"
                     data-controller="items-selector"
+                    data-items-selector-draggable-value="true"
                     data-action="modal-action:items-selector_update@window->items-selector#updateSelect"
                      >
-
+                    {{ form_widget(form.exerciseOrder, {
+                        attr: {
+                            'data-items-selector-target':'order'
+                        }
+                    }) }}
                 {% include 'components/_select-picker.html.twig' with {activeCreate:activeCreate}%}
 
                 {# Champ Symfony réel : conservé pour la soumission #}

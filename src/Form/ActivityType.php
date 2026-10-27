@@ -8,6 +8,7 @@ use App\Repository\ExerciseRepository;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
+use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -25,8 +26,10 @@ class ActivityType extends AbstractType
             ->add('duration', TextType::class, ['label' => 'Durée'])
             ->add('hydration', CheckboxType::class, [
                 'label' => 'Ajouter l\'hydratation',
-            ])
-            ->add('exercises', EntityType::class, [
+                'required' => false
+            ])->add('exerciseOrder', HiddenType::class, [
+                'mapped' => false,
+            ])->add('exercises', EntityType::class, [
                 'class' => Exercise::class,
                 'label'  => 'choix des exercices',
                 'choice_label' => fn (Exercise $exercise): string => (string) $exercise,
