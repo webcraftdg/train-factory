@@ -19,6 +19,12 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 #[Route('/seances', name:'app_session_')]
 final class SessionController extends AbstractController
 {
+
+    public function __construct(
+        private SessionRepository $sessionRepository
+    )
+    {
+    }
     #[Route(name: 'index', methods: ['GET'])]
     #[PageTitle(
         title:'Liste des séances',

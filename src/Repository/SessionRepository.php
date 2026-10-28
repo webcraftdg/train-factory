@@ -40,6 +40,20 @@ class SessionRepository extends ServiceEntityRepository
         return $querybuilder;
     }
 
+    public function createQueryBuilderDataPipeline() : QueryBuilder
+    {
+        $queryBuilder = $this->prepareQueryBuilder();
+        $queryBuilder->innerJoin('s.blocks', 'b');
+        $queryBuilder->innerJoin('b.activities', 'a');
+        $queryBuilder->innerJoin('a.exercises', 'e')
+         ->addSelect('b', 'a', 'e');
+        //$queryBuilder->innerJoin('b.blockActivity', 'ba', 'ba.blockId=b.id');
+        //$queryBuilder->innerJoin('b.activity', 'a', 'a.id=ba.activityId');
+        //$queryBuilder->innerJoin('a.activityExercise', 'ae', 'a.id=ae.activityId');
+        //$queryBuilder->innerJoin('a.exercise', 'e', 'e.id=ae.exerciseId');
+        return $queryBuilder;
+    }
+
     /**
      * prepare query builder
      *
