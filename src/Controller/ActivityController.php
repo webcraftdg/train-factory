@@ -33,8 +33,13 @@ final class ActivityController extends AbstractController
         $activity = new Activity();
         $form = $this->createForm(ActivityType::class, $activity);
         $form->handleRequest($request);
+        $order = json_decode(
+            $form->get('exerciseOrder')->getData() ?: '[]',
+            true
+        );
 
         if ($form->isSubmitted() && $form->isValid()) {
+            $activity->setExerciseOrder($order);
             $entityManager->persist($activity);
             $entityManager->flush();
 
@@ -72,8 +77,13 @@ final class ActivityController extends AbstractController
             $activity
         );
         $form->handleRequest($request);
+        $order = json_decode(
+            $form->get('exerciseOrder')->getData() ?: '[]',
+            true
+        );
 
         if ($form->isSubmitted() && $form->isValid()) {
+            $activity->setExerciseOrder($order);
             $entityManager->flush();
 
             return $this->redirectToRoute('app_activity_index', [], Response::HTTP_SEE_OTHER);
@@ -94,7 +104,12 @@ final class ActivityController extends AbstractController
         $form->handleRequest($request);
         $response = null;
 
+        $order = json_decode(
+            $form->get('exerciseOrder')->getData() ?: '[]',
+            true
+        );
         if ($form->isSubmitted() && $form->isValid()) {
+            $activity->setExerciseOrder($order);
             $entityManager->persist($activity);
             $entityManager->flush();
             $response = $this->json($activity, JsonResponse::HTTP_CREATED, context:['groups' => ['activity:create']]);

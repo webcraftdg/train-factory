@@ -181,6 +181,18 @@ class Activity
         return $this->exercises;
     }
 
+    public function getOrderedExercises(): array
+    {
+        $exercises = $this->exercises->toArray();
+        $order = array_flip($this->exerciseOrder ?? []);
+
+        usort($exercises, static function (Exercise $a, Exercise $b) use ($order): int {
+            return ($order[$a->getId()] ?? PHP_INT_MAX) <=> ($order[$b->getId()] ?? PHP_INT_MAX);
+        });
+
+        return $exercises;
+    }
+
     public function addExercise(Exercise $exercise): static
     {
         if (!$this->exercises->contains($exercise)) {

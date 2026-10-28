@@ -15,10 +15,18 @@ export default class extends Controller {
     sortable = null;
     containerTarget = null;
     connect() {
-         Array.from(this.selectTarget.selectedOptions).forEach((option) => {
+
+        if (this.orderTarget.value) {
+            this.sortingSelectionIds = JSON.parse(this.orderTarget.value);
+        }
+        let initialOrderIds = [];
+        Array.from(this.selectTarget.selectedOptions).forEach((option) => {
             this.initialSelection.push(option.value);
-            this.sortingSelectionIds.push(option.value);
-         });
+            initialOrderIds.push(option.value);
+        });
+        if (this.sortingSelectionIds.length <= 0) {
+            this.sortingSelectionIds = initialOrderIds;
+        }
         console.log(this.initialSelection);
         if (this.modeValue === 'tags') {
             this.cardsTarget.classList.add('hidden');;
@@ -81,8 +89,8 @@ export default class extends Controller {
 
         if (option) {
             option.selected = false;
-            const index = this.sortingSelection.indexOf(option.value);
-            this.sortingSelection.splice(index, 1);
+            const index = this.sortingSelectionIds.indexOf(option.value);
+            this.sortingSelectionIds.splice(index, 1);
         }
 
         this.render();
@@ -91,7 +99,7 @@ export default class extends Controller {
         Array.from(this.selectTarget.options).forEach((option) => {
             option.selected = false;
         });
-        this.sortingSelection.splice(0, this.sortingSelection.length);
+        this.sortingSelectionIds.splice(0, this.sortingSelectionIds.length);
         this.render();
     }
 
@@ -122,10 +130,30 @@ export default class extends Controller {
         this.renderPicker();
     }
 
+    sortOptionsSelected() {
+        const order = this.sortingSelectionIds || [];
+        //create position
+        const positions = new Map(
+            order.map((id, index) => [Number(id), index])
+        );
+        //Get options selected
+        const selectedOptions = Array.from(this.selectTarget.selectedOptions);
+
+        //Sort option with positions
+        selectedOptions.sort((a, b) => {
+            const positionA = positions.get(Number(a.value)) ?? Infinity;
+            const positionB = positions.get(Number(b.value)) ?? Infinity;
+
+            return positionA - positionB;
+        });
+
+        return selectedOptions;
+    }
+
     renderTags() {
         this.tagsTarget.replaceChildren();
 
-        const selected = Array.from(this.selectTarget.selectedOptions);
+        const selected = this.sortOptionsSelected();
 
         if (selected.length === 0) {
             const empty = document.createElement('span');
@@ -175,11 +203,10 @@ export default class extends Controller {
         });
     }
 
-
     renderCards() {
         this.cardsTarget.replaceChildren();
 
-        const selected = Array.from(this.selectTarget.selectedOptions);
+        const selected = this.sortOptionsSelected();
 
         if (selected.length === 0) {
             const empty = document.createElement('span');

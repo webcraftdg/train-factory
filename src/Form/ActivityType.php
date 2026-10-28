@@ -29,6 +29,7 @@ class ActivityType extends AbstractType
                 'required' => false
             ])->add('exerciseOrder', HiddenType::class, [
                 'mapped' => false,
+                'data' => json_encode($options['data']?->getExerciseOrder() ?? [])
             ])->add('exercises', EntityType::class, [
                 'class' => Exercise::class,
                 'label'  => 'choix des exercices',
