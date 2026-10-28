@@ -7,6 +7,7 @@ use App\Entity\Session;
 use App\Repository\BlockRepository;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -20,6 +21,10 @@ class SessionType extends AbstractType
             ->add('name', TextType::class, ['label' => 'Nom'])
             ->add('description', TextareaType::class, ['label' => 'Description'])
             ->add('target', TextType::class, ['label' => 'Cible de la séance'])
+            ->add('blockOrder', HiddenType::class, [
+                'mapped' => false,
+                'data' => json_encode($options['data']?->getBlockOrder() ?? [])
+            ])
             ->add('blocks', EntityType::class, [
                 'class' => Block::class,
                 'label'  => 'Choix des blocs',

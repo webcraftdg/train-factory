@@ -9,6 +9,7 @@ use App\Repository\ActivityRepository;
 use App\Repository\BlockRepository;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -23,6 +24,10 @@ class BlockType extends AbstractType
             ->add('description', TextareaType::class, ['label' => 'Description'])
             ->add('objective', TextareaType::class, ['label' => 'Objectif'])
             ->add('instruction', TextareaType::class, ['label' => 'Consigne'])
+            ->add('activityOrder', HiddenType::class, [
+                'mapped' => false,
+                'data' => json_encode($options['data']?->getActivityOrder() ?? [])
+            ])
             ->add('activities', EntityType::class, [
                 'class' => Activity::class,
                 'label'  => 'Choix des activités',

@@ -50,6 +50,9 @@ class Session
     #[ORM\Column]
     private ?\DateTime $dateUpdate = null;
 
+    #[ORM\Column]
+    private ?array $blockOrder = [];
+
     #[ORM\PrePersist]
     #[ORM\PreUpdate]
     public function updateTimestamp(): void
@@ -140,6 +143,18 @@ class Session
         return $this->blocks;
     }
 
+    public function getOrderedBlocks(): array
+    {
+        $blocks = $this->blocks->toArray();
+        $order = array_flip($this->blockOrder ?? []);
+
+        usort($blocks, static function (Block $a, Block $b) use ($order): int {
+            return ($order[$a->getId()] ?? PHP_INT_MAX) <=> ($order[$b->getId()] ?? PHP_INT_MAX);
+        });
+
+        return $blocks;
+    }
+
     public function addBlock(Block $block): static
     {
         if (!$this->blocks->contains($block)) {
@@ -188,6 +203,18 @@ class Session
     public function setDateUpdate(\DateTime $dateUpdate): static
     {
         $this->dateUpdate = $dateUpdate;
+
+        return $this;
+    }
+
+    public function getBlockOrder(): ?array
+    {
+        return $this->blockOrder;
+    }
+
+    public function setBlockOrder(array $blockOrder): static
+    {
+        $this->blockOrder = $blockOrder;
 
         return $this;
     }

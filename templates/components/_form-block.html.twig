@@ -101,10 +101,16 @@
                     class="border-t border-slate-100 pt-7"
                     data-controller="items-selector"
                     data-items-selector-mode-value="cards"
+                    data-items-selector-draggable-value="true"
                     data-items-selector-url-value="{{path('app_activity_async_show', {id : '{id}'})}}"
                     data-action="modal-action:items-selector_update@window->items-selector#updateSelect"
                      >
 
+                    {{ form_widget(form.activityOrder, {
+                        attr: {
+                            'data-items-selector-target':'order'
+                        }
+                    }) }}
                 {% include 'components/_select-picker.html.twig' with {
                     title:'Activités associées',
                     subtitle:'Sélectionnez les activités pour ce bloc.',

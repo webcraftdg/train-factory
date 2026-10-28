@@ -42,8 +42,12 @@ final class BlockController extends AbstractController
         $block = new Block();
         $form = $this->createForm(BlockType::class, $block);
         $form->handleRequest($request);
-
+        $order = json_decode(
+            $form->get('activityOrder')->getData() ?: '[]',
+            true
+        );
         if ($form->isSubmitted() && $form->isValid()) {
+            $block->setActivityOrder($order);
             $entityManager->persist($block);
             $entityManager->flush();
 
@@ -60,15 +64,20 @@ final class BlockController extends AbstractController
     #[Route('/async-creer', name: 'async_new', methods: ['GET', 'POST'])]
     public function newAsync(Request $request, EntityManagerInterface $entityManager): Response
     {
-        $activity = new Block();
-        $form = $this->createForm(BlockType::class, $activity);
+        $block = new Block();
+        $form = $this->createForm(BlockType::class, $block);
         $form->handleRequest($request);
+        $order = json_decode(
+            $form->get('activityOrder')->getData() ?: '[]',
+            true
+        );
         $response = null;
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $entityManager->persist($activity);
+            $block->setActivityOrder($order);
+            $entityManager->persist($block);
             $entityManager->flush();
-            $response = $this->json($activity, JsonResponse::HTTP_CREATED, context:['groups' => ['activity:create']]);
+            $response = $this->json($block, JsonResponse::HTTP_CREATED, context:['groups' => ['block:create']]);
         }
         if ($response === null) {
             $response =  $this->render('components/_form-block.html.twig', [
@@ -110,10 +119,13 @@ final class BlockController extends AbstractController
     {
         $form = $this->createForm(BlockType::class, $block);
         $form->handleRequest($request);
-
+        $order = json_decode(
+            $form->get('activityOrder')->getData() ?: '[]',
+            true
+        );
         if ($form->isSubmitted() && $form->isValid()) {
+            $block->setActivityOrder($order);
             $entityManager->flush();
-
             return $this->redirectToRoute('app_block_index', [], Response::HTTP_SEE_OTHER);
         }
 

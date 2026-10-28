@@ -73,7 +73,7 @@ export default class extends Controller {
 
         if (option) {
             option.selected = true;
-            this.sortingSelection.push(option.value);
+            this.sortingSelectionIds.push(option.value);
         }
 
         this.pickerTarget.value = '';
