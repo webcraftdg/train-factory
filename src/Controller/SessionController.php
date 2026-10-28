@@ -41,8 +41,12 @@ final class SessionController extends AbstractController
         $session = new Session();
         $form = $this->createForm(SessionType::class, $session);
         $form->handleRequest($request);
-
+        $order = json_decode(
+            $form->get('blockOrder')->getData() ?: '[]',
+            true
+        );
         if ($form->isSubmitted() && $form->isValid()) {
+            $session->setBlockOrder($order);
             $entityManager->persist($session);
             $entityManager->flush();
 
@@ -76,8 +80,12 @@ final class SessionController extends AbstractController
     {
         $form = $this->createForm(SessionType::class, $session);
         $form->handleRequest($request);
-
+        $order = json_decode(
+            $form->get('blockOrder')->getData() ?: '[]',
+            true
+        );
         if ($form->isSubmitted() && $form->isValid()) {
+            $session->setBlockOrder($order);
             $entityManager->flush();
 
             return $this->redirectToRoute('app_session_index', [], Response::HTTP_SEE_OTHER);

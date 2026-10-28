@@ -1,18 +1,32 @@
 
 import { Controller } from '@hotwired/stimulus';
+import Sortable from 'sortablejs';
 
 export default class extends Controller {
-    static targets = ['select', 'picker', 'tags', 'cards'];
+    static targets = ['select', 'picker', 'tags', 'cards', 'order'];
 
     static values = {
         mode: { type: String, default: 'tags' },
+        draggable: {type:Boolean, default: false},
         url: String
     };
     initialSelection = [];
+    sortingSelectionIds = [];
+    sortable = null;
+    containerTarget = null;
     connect() {
-         Array.from(this.selectTarget.selectedOptions).forEach((option) => {
+
+        if (this.orderTarget.value) {
+            this.sortingSelectionIds = JSON.parse(this.orderTarget.value);
+        }
+        let initialOrderIds = [];
+        Array.from(this.selectTarget.selectedOptions).forEach((option) => {
             this.initialSelection.push(option.value);
-         });
+            initialOrderIds.push(option.value);
+        });
+        if (this.sortingSelectionIds.length <= 0) {
+            this.sortingSelectionIds = initialOrderIds;
+        }
         console.log(this.initialSelection);
         if (this.modeValue === 'tags') {
             this.cardsTarget.classList.add('hidden');;
@@ -21,7 +35,30 @@ export default class extends Controller {
             this.tagsTarget.classList.add('hidden');;
             this.cardsTarget.classList.remove('hidden');;
         }
+        if (this.draggableValue === true) {
+            this.containerTarget = this.cardsTarget;
+            if (this.modeValue === 'tags') {
+                this.containerTarget = this.tagsTarget;
+            }
+            this.sortable = Sortable.create(this.containerTarget, {
+                animation: 150,
+                onEnd: () => this.updateOrder()
+            });
+        }
+
         this.render();
+    }
+
+    updateOrder() {
+        this.sortingSelectionIds = Array.from(
+            this.containerTarget.querySelectorAll('[data-item-id]')
+        ).map(element => Number(element.dataset.itemId));
+
+        this.orderTarget.value = JSON.stringify(this.sortingSelectionIds);
+    }
+
+    disconnect() {
+        this.sortable?.destroy();
     }
 
     add() {
@@ -36,6 +73,7 @@ export default class extends Controller {
 
         if (option) {
             option.selected = true;
+            this.sortingSelectionIds.push(option.value);
         }
 
         this.pickerTarget.value = '';
@@ -51,6 +89,8 @@ export default class extends Controller {
 
         if (option) {
             option.selected = false;
+            const index = this.sortingSelectionIds.indexOf(option.value);
+            this.sortingSelectionIds.splice(index, 1);
         }
 
         this.render();
@@ -59,6 +99,7 @@ export default class extends Controller {
         Array.from(this.selectTarget.options).forEach((option) => {
             option.selected = false;
         });
+        this.sortingSelectionIds.splice(0, this.sortingSelectionIds.length);
         this.render();
     }
 
@@ -89,10 +130,30 @@ export default class extends Controller {
         this.renderPicker();
     }
 
+    sortOptionsSelected() {
+        const order = this.sortingSelectionIds || [];
+        //create position
+        const positions = new Map(
+            order.map((id, index) => [Number(id), index])
+        );
+        //Get options selected
+        const selectedOptions = Array.from(this.selectTarget.selectedOptions);
+
+        //Sort option with positions
+        selectedOptions.sort((a, b) => {
+            const positionA = positions.get(Number(a.value)) ?? Infinity;
+            const positionB = positions.get(Number(b.value)) ?? Infinity;
+
+            return positionA - positionB;
+        });
+
+        return selectedOptions;
+    }
+
     renderTags() {
         this.tagsTarget.replaceChildren();
 
-        const selected = Array.from(this.selectTarget.selectedOptions);
+        const selected = this.sortOptionsSelected();
 
         if (selected.length === 0) {
             const empty = document.createElement('span');
@@ -115,6 +176,10 @@ export default class extends Controller {
 
             label.className = 'min-w-0 break-words';
             label.textContent = option.textContent.trim();
+            if (Boolean(this.draggableValue) === true) {
+                tag.setAttribute('draggable', 'true');
+            }
+            tag.dataset.itemId = option.value;
 
             const removeButton = document.createElement('button');
 
@@ -138,11 +203,10 @@ export default class extends Controller {
         });
     }
 
-
     renderCards() {
         this.cardsTarget.replaceChildren();
 
-        const selected = Array.from(this.selectTarget.selectedOptions);
+        const selected = this.sortOptionsSelected();
 
         if (selected.length === 0) {
             const empty = document.createElement('span');
@@ -168,6 +232,8 @@ export default class extends Controller {
                 const container = document.createElement('div');
                 container.classList.add('w-full');
                 container.classList.add('relative');
+                container.dataset.itemId = option.value;
+
                 container.innerHTML = html;
                 const removeButton = document.createElement('button');
                 removeButton.type = 'button';
@@ -220,4 +286,5 @@ export default class extends Controller {
                 this.pickerTarget.appendChild(item);
             });
     }
+
 }

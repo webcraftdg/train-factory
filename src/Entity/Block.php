@@ -8,6 +8,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Attribute\Groups;
 
 #[ORM\Entity(repositoryClass: BlockRepository::class)]
 #[ORM\HasLifecycleCallbacks]
@@ -16,12 +17,15 @@ class Block
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(['Block:create'])]
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(['Block:create'])]
     private ?string $name = null;
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
+    #[Groups(['Block:create'])]
     private ?string $description = null;
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
@@ -53,6 +57,9 @@ class Block
      */
     #[ORM\ManyToMany(targetEntity: Activity::class, inversedBy: 'blocks')]
     private Collection $activities;
+
+    #[ORM\Column(nullable: true)]
+    private ?array $activityOrder = null;
 
 
     #[ORM\PrePersist]
@@ -221,6 +228,17 @@ class Block
         return $this->activities;
     }
 
+    public function getOrderedActivities(): array
+    {
+        $activities = $this->activities->toArray();
+        $order = array_flip($this->activityOrder ?? []);
+
+        usort($activities, static function (Activity $a, Activity $b) use ($order): int {
+            return ($order[$a->getId()] ?? PHP_INT_MAX) <=> ($order[$b->getId()] ?? PHP_INT_MAX);
+        });
+        return $activities;
+    }
+
     public function addActivity(Activity $activity): static
     {
         if (!$this->activities->contains($activity)) {
@@ -256,5 +274,17 @@ class Block
     public function canBeArchived()
     {
         return $this->sessions->isEmpty() && $this->dateArchived === null;
+    }
+
+    public function getActivityOrder(): ?array
+    {
+        return $this->activityOrder;
+    }
+
+    public function setActivityOrder(?array $activityOrder): static
+    {
+        $this->activityOrder = $activityOrder;
+
+        return $this;
     }
 }

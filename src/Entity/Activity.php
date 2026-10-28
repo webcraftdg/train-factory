@@ -44,9 +44,6 @@ class Activity
     )]
     private ?string $duration = '';
 
-    #[ORM\Column(options:['default' => 0])]
-    private ?int $position = 0;
-
     /**
      * @var Collection<int, Exercise>
      */
@@ -71,6 +68,9 @@ class Activity
     #[ORM\Column(options:['default' => false])]
     private ?bool $hydration = false;
 
+    #[ORM\Column(nullable: true)]
+    private ?array $exerciseOrder = null;
+
 
     #[ORM\PrePersist]
     #[ORM\PreUpdate]
@@ -83,13 +83,6 @@ class Activity
     public function createTimestamp(): void
     {
         $this->dateCreate = new DateTime();
-    }
-
-    #[ORM\PrePersist]
-    #[ORM\PreUpdate]
-    public function createPosition(): void
-    {
-        $this->position = ($this->position) ?? 0;
     }
 
     public function getDurationInMinutes(): int
@@ -180,24 +173,24 @@ class Activity
         return $this;
     }
 
-    public function getPosition(): ?int
-    {
-        return $this->position;
-    }
-
-    public function setPosition(int $position): static
-    {
-        $this->position = $position;
-
-        return $this;
-    }
-
     /**
      * @return Collection<int, Exercise>
      */
     public function getExercises(): Collection
     {
         return $this->exercises;
+    }
+
+    public function getOrderedExercises(): array
+    {
+        $exercises = $this->exercises->toArray();
+        $order = array_flip($this->exerciseOrder ?? []);
+
+        usort($exercises, static function (Exercise $a, Exercise $b) use ($order): int {
+            return ($order[$a->getId()] ?? PHP_INT_MAX) <=> ($order[$b->getId()] ?? PHP_INT_MAX);
+        });
+
+        return $exercises;
     }
 
     public function addExercise(Exercise $exercise): static
@@ -310,5 +303,17 @@ class Activity
     public function canBeArchived()
     {
         return $this->blocks->isEmpty() && $this->dateArchived === null;
+    }
+
+    public function getExerciseOrder(): ?array
+    {
+        return $this->exerciseOrder;
+    }
+
+    public function setExerciseOrder(?array $exerciseOrder): static
+    {
+        $this->exerciseOrder = $exerciseOrder;
+
+        return $this;
     }
 }
