@@ -19,30 +19,30 @@ class SessionService
     }
 
     /**
-     * get query builder
-     *
-     * @return \Doctrine\ORM\QueryBuilder
-     */
-    public function getQueryBuilder() : QueryBuilder
-    {
-        return $this->sessionRepository->createQueryBuilderDataPipeline()
-        ->andWhere('s.id=:id')->setParameter('id', $this->session->getId());
-    }
-
-    /**
      * get row
      *
      * @return array
      */
-    public function getRow() : array
+    public function getRows() : array
     {
         /** @var Session $session */
         $session  = $this->getQueryBuilder()->getQuery()->getSingleResult();
         $result = [];
         if ($session instanceof Session) {
-            $result = $this->getSession($session);
+            $result[] = $this->getSession($session);
         }
         return $result;
+    }
+
+    /**
+     * get query builder
+     *
+     * @return \Doctrine\ORM\QueryBuilder
+     */
+    protected function getQueryBuilder() : QueryBuilder
+    {
+        return $this->sessionRepository->createQueryBuilderDataPipeline()
+        ->andWhere('s.id=:id')->setParameter('id', $this->session->getId());
     }
 
     /**

@@ -1,6 +1,6 @@
 <?php
 /**
- * ExcelWriter.php
+ * SessionExcelWriter.php
  *
  * PHP Version 8.2+
  *
@@ -19,7 +19,7 @@ use webcraftdg\dataPipeline\configs\ColumnMapping;
 use webcraftdg\dataPipeline\context\OutputContext;
 use webcraftdg\dataPipeline\exceptions\WriterException;
 
-class ExcelWriter implements DataWriterInterface
+class SessionExcelWriter implements DataWriterInterface
 {
     /**
      * @var array

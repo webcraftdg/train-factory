@@ -10,7 +10,7 @@
  */
 namespace app\io\outputs;
 
-use App\Datapipeline\Io\Writer\ExcelWriter;
+use App\Datapipeline\Io\Writer\SessionExcelWriter;
 use app\io\writers\DbWriter;
 use webcraftdg\dataPipeline\interfaces\OutputInterface;
 use webcraftdg\dataPipeline\configs\PipelineConfig;
@@ -23,9 +23,9 @@ class TableOutput implements OutputInterface, ValidateRulesInterface
     /**
      * $writer
      *
-     * @var DbWriter
+     * @var SessionExcelWriter
      */
-    private  ExcelWriter $writer;
+    private  SessionExcelWriter $writer;
     private array $options;
     private string $transactionMode = 'none';
     private int $batchSize = 250;
@@ -44,7 +44,10 @@ class TableOutput implements OutputInterface, ValidateRulesInterface
         $this->options = $this->config->target->getOptions();
         $this->batchSize = ($this->options['batchSize']) ?? $this->batchSize;
         $this->transactionMode = ($this->options['transactionMode']) ?? $this->transactionMode;
-        $this->writer = new ExcelWriter();
+        $this->writer = new SessionExcelWriter(
+            config: $this->config,
+            options: $this->options
+        );
     }
 
      /**

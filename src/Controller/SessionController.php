@@ -12,8 +12,12 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
+use App\Datapipeline\Service\ExportService;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
+use RuntimeException;
 
 #[IsGranted('IS_AUTHENTICATED')]
 #[Route('/seances', name:'app_session_')]
@@ -111,5 +115,43 @@ final class SessionController extends AbstractController
         $entityManager->persist($session);
         $entityManager->flush();
         return $this->redirectToRoute('app_session_index', [], Response::HTTP_SEE_OTHER);
+    }
+
+    #[Route('/{id}/exporter', name: 'download', methods: ['GET'])]
+    #[IsGranted(User::ROLE_ADMIN)]
+    public function exporter(
+        Session $session,
+        #[Autowire('%kernel.project_dir%')] string $projectDir
+        ): BinaryFileResponse
+    {
+        $exportFilePatch = $this->createFilePath($projectDir, $session->getName());
+        $exportService = new ExportService(
+            name:$session->getName().'-export',
+            version:$session->getId(),
+            stopOnError:true,
+            session:$session,
+            sessionRepository: $this->sessionRepository,
+            options: [
+                'exportFilePatch' => $exportFilePatch
+            ]
+        );
+        $report = $exportService->run();
+        if ($report->success === true){
+            $response = $this->file($exportFilePatch, 'seance.xlsx');
+            $response->deleteFileAfterSend(true);
+        } else {
+             throw new RuntimeException('Impossible de créer le répertoire d\'export');
+        }
+        return $response;
+    }
+
+    private function createFilePath($dir, $fileName) : string
+    {
+        $directory = $dir . '/var/exports';
+        if (!is_dir($directory)) {
+            mkdir($directory, 0775, true);
+        }
+
+        return tempnam($directory, $fileName);
     }
 }

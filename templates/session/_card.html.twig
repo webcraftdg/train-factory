@@ -40,6 +40,19 @@
         {# Actions #}
         <div class="mt-4 flex items-center justify-end
                     border-t border-slate-100 pt-4">
+
+            <a href="{{ path('app_session_download', {id: session.id}) }}"
+               aria-label="Télécharger {{ session.name }}"
+               title="Télécharger {{ session.name }}"
+               onclick="event.stopPropagation()"
+               class="inline-flex min-h-10 min-w-10 items-center justify-center rounded-lg text-blue-600 transition-colors hover:bg-blue-50">
+
+                <span data-controller="svg"
+                      data-svg-name-value="download"
+                      class="inline-flex items-center justify-center"
+                      aria-hidden="true">
+                </span>
+            </a>
             <a href="{{ path('app_session_edit', {id: session.id}) }}"
                aria-label="Modifier {{ session.name }}"
                title="Modifier {{ session.name }}"
