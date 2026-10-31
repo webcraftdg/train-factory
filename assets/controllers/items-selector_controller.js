@@ -221,6 +221,9 @@ export default class extends Controller {
         selected.forEach(option => {
             const id = option.value;
             const finalUrl = decodeURI(this.urlValue).replace('{id}', id);
+            const container = document.createElement('div');
+            container.classList.add('w-full', 'relative');
+            container.dataset.itemId = option.value;
             fetch(finalUrl, {
                 method: 'GET'
             }).then((response) => {
@@ -229,10 +232,6 @@ export default class extends Controller {
                 }
                 return response.text();
             }).then((html) => {
-                const container = document.createElement('div');
-                container.classList.add('w-full');
-                container.classList.add('relative');
-                container.dataset.itemId = option.value;
 
                 container.innerHTML = html;
                 const removeButton = document.createElement('button');

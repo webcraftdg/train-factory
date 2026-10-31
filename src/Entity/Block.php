@@ -127,7 +127,7 @@ class Block
         return $this->objective;
     }
 
-    public function setObjective(string $objective): static
+    public function setObjective(?string $objective): static
     {
         $this->objective = $objective;
         return $this;
@@ -138,7 +138,7 @@ class Block
         return $this->instruction;
     }
 
-    public function setInstruction(string $instruction): static
+    public function setInstruction(?string $instruction): static
     {
         $this->instruction = $instruction;
 

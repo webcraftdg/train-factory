@@ -47,10 +47,6 @@ class SessionRepository extends ServiceEntityRepository
         $queryBuilder->innerJoin('b.activities', 'a');
         $queryBuilder->innerJoin('a.exercises', 'e')
          ->addSelect('b', 'a', 'e');
-        //$queryBuilder->innerJoin('b.blockActivity', 'ba', 'ba.blockId=b.id');
-        //$queryBuilder->innerJoin('b.activity', 'a', 'a.id=ba.activityId');
-        //$queryBuilder->innerJoin('a.activityExercise', 'ae', 'a.id=ae.activityId');
-        //$queryBuilder->innerJoin('a.exercise', 'e', 'e.id=ae.exerciseId');
         return $queryBuilder;
     }
 

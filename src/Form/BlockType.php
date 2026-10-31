@@ -22,8 +22,8 @@ class BlockType extends AbstractType
         $builder
             ->add('name', TextType::class, ['label' => 'Nom'])
             ->add('description', TextareaType::class, ['label' => 'Description'])
-            ->add('objective', TextareaType::class, ['label' => 'Objectif'])
-            ->add('instruction', TextareaType::class, ['label' => 'Consigne'])
+            ->add('objective', TextareaType::class, ['label' => 'Objectif', 'required' => false])
+            ->add('instruction', TextareaType::class, ['label' => 'Consigne', 'required' => false])
             ->add('activityOrder', HiddenType::class, [
                 'mapped' => false,
                 'data' => json_encode($options['data']?->getActivityOrder() ?? [])

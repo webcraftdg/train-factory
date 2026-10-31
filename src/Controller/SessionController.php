@@ -15,9 +15,9 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
-use App\Datapipeline\Service\ExportService;
+use App\Datapipeline\Service\ExportSessionService;
+use App\Exception\HttpException;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
-use RuntimeException;
 
 #[IsGranted('IS_AUTHENTICATED')]
 #[Route('/seances', name:'app_session_')]
@@ -119,39 +119,50 @@ final class SessionController extends AbstractController
 
     #[Route('/{id}/exporter', name: 'download', methods: ['GET'])]
     #[IsGranted(User::ROLE_ADMIN)]
-    public function exporter(
+    public function download(
         Session $session,
         #[Autowire('%kernel.project_dir%')] string $projectDir
         ): BinaryFileResponse
     {
-        $exportFilePatch = $this->createFilePath($projectDir, $session->getName());
-        $exportService = new ExportService(
-            name:$session->getName().'-export',
+        $rows = [
+            ['id' => $session->getId()]
+        ];
+        $exportFilePath = $this->createFilePath($projectDir);
+        $filename = str_replace(' ', '-', $session->getName());
+        $exportService = new ExportSessionService(
+            name:$filename.'_export',
+            rows: $rows,
             version:$session->getId(),
             stopOnError:true,
-            session:$session,
             sessionRepository: $this->sessionRepository,
             options: [
-                'exportFilePatch' => $exportFilePatch
+                'exportFilePath' => $exportFilePath
             ]
         );
         $report = $exportService->run();
         if ($report->success === true){
-            $response = $this->file($exportFilePatch, 'seance.xlsx');
+            $response = $this->file($exportFilePath, $filename.'.xlsx');
             $response->deleteFileAfterSend(true);
         } else {
-             throw new RuntimeException('Impossible de créer le répertoire d\'export');
+             throw new HttpException(message:'Impossible de créer le répertoire d\'export', code:500);
         }
         return $response;
     }
 
-    private function createFilePath($dir, $fileName) : string
+    private function createFilePath(string $target) : string
     {
-        $directory = $dir . '/var/exports';
-        if (!is_dir($directory)) {
-            mkdir($directory, 0775, true);
+        try {
+             $directory = $target . '/var/exports';
+            if (!is_dir($directory)) {
+                mkdir($directory, 0775, true);
+            }
+            $tempName =  tempnam($directory, 'session_');
+            if( $tempName === false) {
+                throw new HttpException(message:'Erreur de création du répertoire', code:500);
+            }
+            return $tempName;
+        } catch(HttpException $e) {
+             throw new HttpException(message:'Erreur de création du répertoire', code:500);
         }
-
-        return tempnam($directory, $fileName);
     }
 }

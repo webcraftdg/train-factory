@@ -8,24 +8,23 @@
  * @version XXX
  * @package app\io\outputs
  */
-namespace app\io\outputs;
+namespace App\Datapipeline\Io\Output;
 
-use App\Datapipeline\Io\Writer\SessionExcelWriter;
-use app\io\writers\DbWriter;
+use App\Datapipeline\Io\Writer\SessionXlsxWriter;
 use webcraftdg\dataPipeline\interfaces\OutputInterface;
 use webcraftdg\dataPipeline\configs\PipelineConfig;
 use webcraftdg\dataPipeline\interfaces\RuntimeContextInterface;
 use webcraftdg\dataPipeline\interfaces\ValidateRulesInterface;
 use webcraftdg\dataPipeline\rules\FileRules;
 
-class TableOutput implements OutputInterface, ValidateRulesInterface
+class SessionXlsxOutput implements OutputInterface, ValidateRulesInterface
 {
     /**
      * $writer
      *
-     * @var SessionExcelWriter
+     * @var SessionXlsxWriter
      */
-    private  SessionExcelWriter $writer;
+    private  SessionXlsxWriter $writer;
     private array $options;
     private string $transactionMode = 'none';
     private int $batchSize = 250;
@@ -44,7 +43,7 @@ class TableOutput implements OutputInterface, ValidateRulesInterface
         $this->options = $this->config->target->getOptions();
         $this->batchSize = ($this->options['batchSize']) ?? $this->batchSize;
         $this->transactionMode = ($this->options['transactionMode']) ?? $this->transactionMode;
-        $this->writer = new SessionExcelWriter(
+        $this->writer = new SessionXlsxWriter(
             config: $this->config,
             options: $this->options
         );

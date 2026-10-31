@@ -44,6 +44,7 @@
             <a href="{{ path('app_session_download', {id: session.id}) }}"
                aria-label="Télécharger {{ session.name }}"
                title="Télécharger {{ session.name }}"
+                data-turbo-prefetch="false"
                onclick="event.stopPropagation()"
                class="inline-flex min-h-10 min-w-10 items-center justify-center rounded-lg text-blue-600 transition-colors hover:bg-blue-50">
 

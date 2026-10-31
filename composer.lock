@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "341e1edc5d5894c570825aff59f9998e",
+    "content-hash": "019734ff8bfa9e1b76ba110bfec1f210",
     "packages": [
         {
             "name": "composer/pcre",
@@ -8598,17 +8598,11 @@
         },
         {
             "name": "webcraftdg/data-pipeline",
-            "version": "1.4.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/webcraftdg/data-pipeline.git",
-                "reference": "c7c0ee908647bf30b82d707e3cec144546abfef6"
-            },
+            "version": "dev-devel",
             "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/webcraftdg/data-pipeline/zipball/c7c0ee908647bf30b82d707e3cec144546abfef6",
-                "reference": "c7c0ee908647bf30b82d707e3cec144546abfef6",
-                "shasum": ""
+                "type": "path",
+                "url": "../data-pipeline",
+                "reference": "4a0fe873b50e353a1f938f25453deeee662e8c4a"
             },
             "require": {
                 "php": "^8.3",
@@ -8628,7 +8622,11 @@
                     "webcraftdg\\dataPipeline\\": "src/"
                 }
             },
-            "notification-url": "https://packagist.org/downloads/",
+            "autoload-dev": {
+                "psr-4": {
+                    "webcraftdg\\dataPipeline\\tests\\": "tests/"
+                }
+            },
             "license": [
                 "MIT"
             ],
@@ -8656,7 +8654,10 @@
                 "issues": "https://github.com/webcraftdg/data-pipeline/issues",
                 "source": "https://github.com/webcraftdg/data-pipeline"
             },
-            "time": "2026-06-01T13:46:58+00:00"
+            "transport-options": {
+                "symlink": true,
+                "relative": true
+            }
         },
         {
             "name": "webmozart/assert",
@@ -11427,7 +11428,9 @@
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": {},
+    "stability-flags": {
+        "webcraftdg/data-pipeline": 20
+    },
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {

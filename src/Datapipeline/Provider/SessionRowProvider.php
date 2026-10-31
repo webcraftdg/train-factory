@@ -1,19 +1,17 @@
 <?php
 
-namespace App\Datapipeline\Service;
+namespace App\Datapipeline\Provider;
 
-use App\Entity\Session;
-use App\Entity\Block;
 use App\Entity\Activity;
+use App\Entity\Block;
+use App\Entity\Session;
 use App\Entity\Exercise;
-use App\Repository\SessionRepository;
-use Doctrine\ORM\QueryBuilder;
 
-class SessionService
+class SessionRowProvider
 {
+
     public function __construct(
-        private Session $session,
-        private SessionRepository $sessionRepository
+        private Session $session
     )
     {
     }
@@ -23,26 +21,9 @@ class SessionService
      *
      * @return array
      */
-    public function getRows() : array
+    public function getRow() : array
     {
-        /** @var Session $session */
-        $session  = $this->getQueryBuilder()->getQuery()->getSingleResult();
-        $result = [];
-        if ($session instanceof Session) {
-            $result[] = $this->getSession($session);
-        }
-        return $result;
-    }
-
-    /**
-     * get query builder
-     *
-     * @return \Doctrine\ORM\QueryBuilder
-     */
-    protected function getQueryBuilder() : QueryBuilder
-    {
-        return $this->sessionRepository->createQueryBuilderDataPipeline()
-        ->andWhere('s.id=:id')->setParameter('id', $this->session->getId());
+        return $this->getSession($this->session);
     }
 
     /**
@@ -111,6 +92,7 @@ class SessionService
                 'description' => $activity->getDescription(),
                 'objective' => $activity->getObjective(),
                 'instruction' => $activity->getInstruction(),
+                'hydration' => $activity->isHydration(),
                 'exercises' => $this->getExercises($activity)
             ];
         }
@@ -138,5 +120,4 @@ class SessionService
         }
         return $exercises;
     }
-
 }
