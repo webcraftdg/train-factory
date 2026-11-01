@@ -142,7 +142,7 @@ class Activity
         return $this->instruction;
     }
 
-    public function setInstruction(string $instruction): static
+    public function setInstruction(?string $instruction): static
     {
         $this->instruction = $instruction;
 
@@ -154,7 +154,7 @@ class Activity
         return $this->objective;
     }
 
-    public function setObjective(string $objective): static
+    public function setObjective(?string $objective): static
     {
         $this->objective = $objective;
 

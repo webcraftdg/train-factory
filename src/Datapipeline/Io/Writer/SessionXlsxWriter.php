@@ -117,7 +117,7 @@ class SessionXlsxWriter implements DataWriterInterface
             */
     }
 
-    private function writeLine(Worksheet $sheet, $line, string $text, string $colStart, ?string $colEnd = null)
+    private function writeLine(Worksheet $sheet, int $line, string $text, string $colStart, ?string $colEnd = null)
     {
         $colEnd = ($colEnd) ?? $colStart;
         $this->configureLineStyle($sheet, $line, $colStart, $colEnd);

@@ -95,24 +95,6 @@
 
                     {{ form_errors(form.description) }}
                 </div>
-
-                <div>
-                    {{ form_label(form.objective, null, {
-                        label_attr: {
-                            class: 'mb-2 block text-sm font-medium text-slate-700'
-                        }
-                    }) }}
-
-                    {{ form_widget(form.objective, {
-                        attr: {
-                            rows: 4,
-                            class: 'w-full rounded-lg border border-slate-300 px-4 py-3 text-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20'
-                        }
-                    }) }}
-
-                    {{ form_errors(form.objective) }}
-                </div>
-
                 <div>
                     {{ form_label(form.instruction, null, {
                         label_attr: {
@@ -128,6 +110,22 @@
                     }) }}
 
                     {{ form_errors(form.instruction) }}
+                </div>
+                 <div>
+                    {{ form_label(form.objective, null, {
+                        label_attr: {
+                            class: 'mb-2 block text-sm font-medium text-slate-700'
+                        }
+                    }) }}
+
+                    {{ form_widget(form.objective, {
+                        attr: {
+                            rows: 4,
+                            class: 'w-full rounded-lg border border-slate-300 px-4 py-3 text-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20'
+                        }
+                    }) }}
+
+                    {{ form_errors(form.objective) }}
                 </div>
 
             </div>
