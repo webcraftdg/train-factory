@@ -6,6 +6,7 @@ export default class extends Controller {
   connect() {
     this.counter = 0;
     this.blocksTarget.addEventListener('click', e => this.handleClick(e));
+    this.blocksTarget.addEventListener('input', e => { if (e.target.matches('[data-field="blockDescription"]')) this.fitDescription(e.target); });
     this.blocksTarget.addEventListener('change', e => {
       if (e.target.matches('[data-field="separator"]')) e.target.closest('[data-block]').dataset.separator = String(e.target.checked);
     });
@@ -22,6 +23,7 @@ export default class extends Controller {
     block.querySelector('[data-field="name"]').value = name;
     this.blocksTarget.append(fragment);
     if (withActivity) this.appendActivity(block);
+    this.fitDescription(block.querySelector('[data-field="blockDescription"]'));
   }
   appendActivity(block) {
     const tbody = block.querySelector('[data-role="activity-list"]');
@@ -30,6 +32,12 @@ export default class extends Controller {
     const id = `a${++this.counter}`;
     rows.forEach(row => row.dataset.uid = id);
     tbody.append(fragment);
+    this.fitDescription(block.querySelector('[data-field="blockDescription"]'));
+  }
+  fitDescription(textarea) {
+    if (!textarea) return;
+    textarea.style.height = '0px';
+    textarea.style.height = `${Math.max(textarea.scrollHeight, textarea.parentElement.clientHeight)}px`;
   }
   handleClick(e) {
     const button = e.target.closest('button[data-role]');
@@ -48,6 +56,7 @@ export default class extends Controller {
       const next = row.nextElementSibling;
       if (next?.matches('[data-hydration]') && next.dataset.uid === row.dataset.uid) next.remove();
       row.remove();
+      this.fitDescription(block.querySelector('[data-field="blockDescription"]'));
     } else if (role === 'remove-consigne') {
       const cell = row.querySelector('[data-role="consigne-cell"]');
       cell.classList.add('tf-merged');
@@ -60,11 +69,13 @@ export default class extends Controller {
     } else if (role === 'remove-exercise') {
       const cell = button.closest('[data-role="exercise-cell"]');
       const other = [...row.querySelectorAll('[data-role="exercise-cell"]')].filter(c => c !== cell && !c.hidden)[0];
+      if (!other) return;
       cell.querySelector('textarea').value = '';
       cell.querySelector('textarea').disabled = true;
       cell.hidden = true;
       if (other) other.colSpan = Number(other.colSpan || 1) + 1;
-      // Les deux tireurs peuvent être retirés; le serveur vérifiera la contrainte métier.
+      // Au moins un exercice doit rester : empêcher la suppression du dernier.
+
     }
   }
   save() {
@@ -82,9 +93,13 @@ export default class extends Controller {
         const activeExercises = [...row.querySelectorAll('[data-role="exercise-cell"]')].filter(c => !c.hidden);
         if (!activeExercises.length) errors.push({field:duration, message:`Partie ${bi+1}, ligne ${ai+1} : au moins un tireur/exercice est nécessaire.`});
         const hydration = row.nextElementSibling?.matches('[data-hydration]') ? Number(row.nextElementSibling.querySelector('input').value || 0) : 0;
-        return { description:read('description'), tireurA:read('tireurA'), tireurB:read('tireurB'), instruction:read('instruction'), objective:read('objective'), duration:read('duration'), hydration };
+        const exercises = activeExercises.map(cell => ({
+          label: cell.querySelector('.tf-exercise-label')?.value.trim() || '',
+          description: cell.querySelector('textarea')?.value || ''
+        }));
+        return { exercises, instruction:read('instruction'), objective:read('objective'), duration:read('duration'), hydration };
       });
-      return {name:name.value, separator:block.querySelector('[data-field="separator"]').checked, activities};
+      return {name:name.value, description:block.querySelector('[data-field="blockDescription"]').value, separator:block.querySelector('[data-field="separator"]').checked, activities};
     });
     const payload = {theme:theme.value, blocks};
     if (errors.length) {
