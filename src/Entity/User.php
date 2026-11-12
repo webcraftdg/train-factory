@@ -7,6 +7,8 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Serializer\Attribute\Groups;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\Table(name: '`user`')]
@@ -22,15 +24,20 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(['user:list', 'user:detail'])]
     private ?int $id = null;
 
     #[ORM\Column(length: 180)]
+    #[Assert\NotBlank(groups:['user:create'])]
+    #[Groups(['user:list', 'user:detail'])]
     private ?string $email = null;
 
     /**
      * @var list<string> The user roles
      */
     #[ORM\Column]
+    #[Assert\NotBlank(groups:['user:create'])]
+    #[Groups(['user:list', 'user:detail'])]
     private array $roles = [];
 
     /**
@@ -39,10 +46,19 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column]
     private ?string $password = null;
 
+    #[Assert\NotBlank(groups:['user:create'])]
+    #[Assert\Length(min: 8, groups:['user:create', 'user:update'])]
+    private ?string $plainPassword = null;
+
+
     #[ORM\Column(length: 512)]
+    #[Assert\NotBlank(groups:['user:create'])]
+    #[Groups(['user:list', 'user:detail'])]
     private ?string $lastname = null;
 
     #[ORM\Column(length: 512)]
+    #[Assert\NotBlank(groups:['user:create'])]
+    #[Groups(['user:list', 'user:detail'])]
     private ?string $firstname = null;
 
     public function getId(): ?int
@@ -79,7 +95,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         $roles = $this->roles;
         // guarantee every user at least has ROLE_USER
-        $roles[] = 'ROLE_USER';
+       // $roles[] = 'ROLE_USER';
 
         return array_unique($roles);
     }
@@ -106,6 +122,17 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         $this->password = $password;
 
+        return $this;
+    }
+
+    public function getPlainPassword(): ?string
+    {
+        return $this->plainPassword;
+    }
+
+    public function setPlainPassword(string $plainPassword): static
+    {
+        $this->plainPassword = $plainPassword;
         return $this;
     }
 
@@ -148,5 +175,14 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->firstname = $firstname;
 
         return $this;
+    }
+
+    public static function getAvailbaleRoles() : array
+    {
+        return [
+            'Moniteur' => User::ROLE_COACH,
+            'Entraineur' => User::ROLE_TRAINEE,
+            'Créateur' => User::ROLE_CREATOR,
+        ];
     }
 }

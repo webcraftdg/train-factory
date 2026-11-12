@@ -10,6 +10,7 @@ use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Attribute\Groups;
 use Symfony\Component\Validator\Constraints\Regex;
+use Symfony\Component\Validator\Constraints\NotBlank;
 
 #[ORM\Entity(repositoryClass: ActivityRepository::class)]
 #[ORM\HasLifecycleCallbacks]
@@ -20,21 +21,24 @@ class Activity
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups(['activity:create'])]
+    #[Groups(['activity:detail', 'activity:list'])]
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups(['activity:create'])]
+    #[NotBlank(groups:['activity:create'])]
+    #[Groups(['activity:detail', 'activity:list'])]
     private ?string $name = null;
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
-    #[Groups(['activity:create'])]
+    #[Groups(['activity:detail', 'activity:list'])]
     private ?string $description = null;
 
-      #[ORM\Column(type: Types::TEXT, nullable: true)]
+    #[ORM\Column(type: Types::TEXT, nullable: true)]
+    #[Groups(['activity:detail', 'activity:list'])]
     private ?string $objective = null;
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
+    #[Groups(['activity:detail', 'activity:list'])]
     private ?string $instruction = null;
 
     #[ORM\Column(length: 20)]
@@ -42,12 +46,14 @@ class Activity
         pattern: '/^(?:\d+|\d\[\d\+\d\])$/',
         message: 'La durée doit être un nombre ou respecter le format 2[2+1].'
     )]
+    #[Groups(['activity:detail', 'activity:list'])]
     private ?string $duration = '';
 
     /**
      * @var Collection<int, Exercise>
      */
     #[ORM\ManyToMany(targetEntity: Exercise::class, inversedBy: 'activities')]
+    #[Groups(['activity:detail', 'activity:list'])]
     private Collection $exercises;
 
     #[ORM\Column(nullable: true)]
@@ -66,6 +72,7 @@ class Activity
     private Collection $blocks;
 
     #[ORM\Column(options:['default' => false])]
+    #[Groups(['activity:detail', 'activity:list'])]
     private ?bool $hydration = false;
 
     #[ORM\Column(nullable: true)]
