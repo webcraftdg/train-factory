@@ -21,24 +21,24 @@ class Activity
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups(['activity:detail', 'activity:list'])]
+    #[Groups(['activity:detail', 'activity:list', 'block:detail','session:detail', 'session:list'])]
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
     #[NotBlank(groups:['activity:create'])]
-    #[Groups(['activity:detail', 'activity:list'])]
+    #[Groups(['activity:detail', 'activity:list', 'block:detail','session:detail', 'session:list'])]
     private ?string $name = null;
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
-    #[Groups(['activity:detail', 'activity:list'])]
+    #[Groups(['activity:detail', 'activity:list', 'block:detail','session:detail', 'session:list'])]
     private ?string $description = null;
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
-    #[Groups(['activity:detail', 'activity:list'])]
+    #[Groups(['activity:detail', 'activity:list', 'block:detail','session:detail', 'session:list'])]
     private ?string $objective = null;
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
-    #[Groups(['activity:detail', 'activity:list'])]
+    #[Groups(['activity:detail', 'activity:list', 'block:detail','session:detail', 'session:list'])]
     private ?string $instruction = null;
 
     #[ORM\Column(length: 20)]
@@ -46,14 +46,14 @@ class Activity
         pattern: '/^(?:\d+|\d\[\d\+\d\])$/',
         message: 'La durée doit être un nombre ou respecter le format 2[2+1].'
     )]
-    #[Groups(['activity:detail', 'activity:list'])]
+    #[Groups(['activity:detail', 'activity:list', 'block:detail','session:detail', 'session:list'])]
     private ?string $duration = '';
 
     /**
      * @var Collection<int, Exercise>
      */
     #[ORM\ManyToMany(targetEntity: Exercise::class, inversedBy: 'activities')]
-    #[Groups(['activity:detail', 'activity:list'])]
+    #[Groups(['activity:detail', 'activity:list', 'block:detail','session:detail', 'session:list'])]
     private Collection $exercises;
 
     #[ORM\Column(nullable: true)]

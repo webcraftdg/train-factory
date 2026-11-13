@@ -18,17 +18,41 @@ class Exercise
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups(['exercise:detail', 'exercises:list', 'activity:detail', 'activity:list'])]
+    #[Groups([
+        'exercise:detail',
+        'exercises:list',
+        'activity:detail',
+        'activity:list',
+        'block:detail',
+        'session:detail',
+        'session:list'
+    ])]
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
     #[NotBlank(message:'Le nom est obligatoire', groups:['exercise:create'])]
-    #[Groups(['exercise:detail', 'exercises:list', 'activity:detail', 'activity:list'])]
+    #[Groups([
+        'exercise:detail',
+        'exercises:list',
+        'activity:detail',
+        'activity:list',
+        'block:detail',
+        'session:detail',
+        'session:list'
+    ])]
     private ?string $name = null;
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     #[NotBlank(message:'Le nom est obligatoire', groups:['exercise:create'])]
-    #[Groups(['exercise:detail', 'exercises:list', 'activity:detail', 'activity:list'])]
+    #[Groups([
+        'exercise:detail',
+        'exercises:list',
+        'activity:detail',
+        'activity:list',
+        'block:detail',
+        'session:detail',
+        'session:list'
+    ])]
     private ?string $description = null;
 
     #[ORM\Column]

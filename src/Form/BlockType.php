@@ -4,9 +4,7 @@ namespace App\Form;
 
 use App\Entity\Activity;
 use App\Entity\Block;
-use App\Entity\Session;
 use App\Repository\ActivityRepository;
-use App\Repository\BlockRepository;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;

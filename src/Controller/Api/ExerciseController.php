@@ -4,7 +4,7 @@ namespace App\Controller\Api;
 
 use App\Entity\Exercise;
 use App\Entity\User;
-use App\Form\Api\ExerciseType;
+use App\Form\Api\ApiExerciseType;
 use App\Repository\ExerciseRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -57,13 +57,13 @@ final class ExerciseController extends AbstractController
         tags:['Exercices'],
         requestBody: new OA\RequestBody(
             required: true,
-            content: new Model(type:ExerciseType::class)
+            content: new Model(type:ApiExerciseType::class)
         ),
         responses: [
             new OA\Response(
                 response:201,
                 description: 'Created',
-                content: new Model(type:ExerciseType::class, groups:['exercise:detail'])
+                content: new Model(type:ApiExerciseType::class, groups:['exercise:detail'])
             ),
              new OA\Response(
                 response:400,
@@ -74,7 +74,7 @@ final class ExerciseController extends AbstractController
     public function create(Request $request): JsonResponse
     {
         $entity = new Exercise();
-        $form = $this->formFactory->create(ExerciseType::class, $entity, [
+        $form = $this->formFactory->create(ApiExerciseType::class, $entity, [
             'validation_groups' => ['Default', 'exercise:create'],
         ]);
         $data = json_decode($request->getContent(), true);
@@ -97,13 +97,13 @@ final class ExerciseController extends AbstractController
         tags:['Exercices'],
         requestBody: new OA\RequestBody(
             required: true,
-            content: new Model(type:ExerciseType::class)
+            content: new Model(type:ApiExerciseType::class)
         ),
         responses: [
             new OA\Response(
                 response:202,
                 description: 'Mise à jour',
-                content: new Model(type:ExerciseType::class, groups:['exercise:detail'])
+                content: new Model(type:ApiExerciseType::class, groups:['exercise:detail'])
             ),
              new OA\Response(
                 response:400,
@@ -113,7 +113,7 @@ final class ExerciseController extends AbstractController
     )]
     public function update(Exercise $entity, Request $request): JsonResponse
     {
-        $form = $this->formFactory->create(ExerciseType::class, $entity, [
+        $form = $this->formFactory->create(ApiExerciseType::class, $entity, [
             'validation_groups' => ['Default', 'exercise:update'],
         ]);
         $jsonContent = json_decode($request->getContent(), true);

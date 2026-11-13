@@ -9,6 +9,8 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Symfony\Component\Serializer\Attribute\Groups;
+use Symfony\Component\Validator\Constraints\NotBlank;
 
 #[ORM\Entity(repositoryClass: SessionRepository::class)]
 #[ORM\HasLifecycleCallbacks]
@@ -21,15 +23,20 @@ class Session
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(['session:detail', 'session:list'])]
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
+    #[NotBlank(groups:['session:create', 'session:update'])]
+    #[Groups(['session:detail', 'session:list'])]
     private ?string $name = null;
 
     #[ORM\Column(type: Types::TEXT)]
+    #[Groups(['session:detail', 'session:list'])]
     private ?string $description = null;
 
     #[ORM\Column(length: 255)]
+    #[NotBlank(groups:['session:create', 'session:update'])]
     private ?string $target = null;
 
     #[ORM\Column]
@@ -39,6 +46,7 @@ class Session
      * @var Collection<int, Block>
      */
     #[ORM\ManyToMany(targetEntity: Block::class, inversedBy: 'sessions')]
+    #[Groups(['session:detail', 'session:list'])]
     private Collection $blocks;
 
     #[ORM\Column(type: Types::DATE_MUTABLE, nullable: true)]

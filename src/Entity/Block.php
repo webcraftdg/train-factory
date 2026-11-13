@@ -9,6 +9,7 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Attribute\Groups;
+use Symfony\Component\Validator\Constraints\NotBlank;
 
 #[ORM\Entity(repositoryClass: BlockRepository::class)]
 #[ORM\HasLifecycleCallbacks]
@@ -17,24 +18,29 @@ class Block
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups(['Block:create'])]
+    #[Groups(['block:detail', 'block:list','session:detail', 'session:list'])]
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups(['Block:create'])]
+    #[NotBlank(groups:['block:create', 'block:update'])]
+    #[Groups(['block:detail', 'block:list','session:detail', 'session:list'])]
     private ?string $name = null;
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
-    #[Groups(['Block:create'])]
+    #[NotBlank(groups:['block:create', 'block:update'])]
+    #[Groups(['block:detail', 'block:list','session:detail', 'session:list'])]
     private ?string $description = null;
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
+    #[Groups(['block:detail', 'block:list','session:detail', 'session:list'])]
     private ?string $objective = null;
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
+    #[Groups(['block:detail', 'block:list','session:detail', 'session:list'])]
     private ?string $instruction = null;
 
     #[ORM\Column]
+    #[Groups(['block:detail', 'block:list','session:detail', 'session:list'])]
     private ?int $duration = null;
 
     /**
@@ -44,6 +50,7 @@ class Block
     private Collection $sessions;
 
     #[ORM\Column(type: Types::DATE_MUTABLE, nullable: true)]
+    #[Groups(['block:detail'])]
     private ?\DateTime $dateArchived = null;
 
     #[ORM\Column]
@@ -56,6 +63,7 @@ class Block
      * @var Collection<int, Activity>
      */
     #[ORM\ManyToMany(targetEntity: Activity::class, inversedBy: 'blocks')]
+    #[Groups(['block:detail', 'session:detail', 'session:list'])]
     private Collection $activities;
 
     #[ORM\Column(nullable: true)]
