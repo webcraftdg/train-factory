@@ -1,0 +1,59 @@
+
+<div class="mb-5">
+    <h3 class="text-base font-semibold text-slate-900">
+        {{title|default('Exercices associés')}}
+    </h3>
+
+    <p class="mt-1 text-sm text-slate-500">
+        {{subtitle|default('Sélectionnez les exercices qui composent cette activité.')}}
+    </p>
+</div>
+
+{# Étiquettes #}
+<div data-items-selector-target="tags" class="mb-4 flex min-h-14 flex-wrap items-center gap-2 rounded-lg border border-slate-200 bg-slate-50 p-3">
+
+    <span class="text-sm text-slate-400">
+        {{emptyMessage|default('Aucun exercice sélectionné.')}}
+    </span>
+
+</div>
+
+<div data-items-selector-target="cards" class="mb-4 flex min-h-14 flex-wrap items-center gap-2 rounded-lg border border-slate-200 bg-slate-50 p-3">
+    <span class="space-y-3">
+        {{emptyMessage|default('Aucun exercice sélectionné.')}}
+    </span>
+
+</div>
+
+<div class="grid grid-cols-1 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-end {{activeCreate ? 'gap-3' : ''}}" >
+
+    {# Liste déroulante visible #}
+    <div class="min-w-0">
+        <label for="items-picker"
+                class="mb-2 block text-sm font-medium text-slate-700">
+                {{inputLabel|default('Bibliothèque d’exercices')}}
+        </label>
+
+        <select id="items-picker"
+                data-items-selector-target="picker"
+                data-action="change->items-selector#add"
+                class="min-h-11 w-full rounded-lg border border-slate-300 bg-white px-4 py-2.5 text-sm text-slate-700 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20">
+
+            <option value="">
+                {{inputPlaceholder|default('Sélectionner un exercice...')}}
+            </option>
+
+        </select>
+    </div>
+    {% set activeButtonAdd = (activeCreate is defined) ? activeCreate : false %}
+    <button
+            type="button"
+            data-controller="button-action"
+            data-button-action-url-value="{{path(buttonActionUrl|default('bo_exercise_async_new'))}}"
+            data-action="click->button-action#open"
+            class=" {{activeButtonAdd ? 'inline-flex' : 'hidden' }}  min-h-11 items-center justify-center gap-2 rounded-lg border border-blue-200 bg-blue-50 px-4 py-2.5 text-sm font-semibold text-blue-700 transition-colors hover:bg-blue-100">
+        <span aria-hidden="true">+</span>
+        {{buttonActionLabel|default('Créer un exercice')}}
+    </button>
+</div>
+

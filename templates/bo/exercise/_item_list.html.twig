@@ -1,0 +1,52 @@
+<tr
+data-controller="archived"
+data-archived-context-name-value="{{ exercise.name}}"
+class="block p-4 transition-colors
+            hover:bg-slate-50
+            md:table-row md:p-0">
+
+    <td class="block font-semibold text-slate-900
+                md:table-cell md:px-5 md:py-4">
+        {{ exercise.name }}
+    </td>
+
+    <td class="mt-2 block break-words text-slate-600
+                md:mt-0 md:table-cell md:px-5 md:py-4">
+        {{ exercise.description|default('—') }}
+    </td>
+
+    <td class="mt-3 block md:mt-0 md:table-cell
+                md:px-5 md:py-4 md:text-right">
+
+        <a href="{{ path('bo_exercise_edit', {id: exercise.id}) }}"
+        aria-label="&Eacute;diter {{ exercise.name }}"
+        title="&Eacute;diter {{ exercise.name }}"
+        data-turbo-prefetch="false"
+        class="inline-flex min-h-10 items-center gap-2
+                rounded-lg px-3 py-2 font-medium
+                text-blue-600 hover:bg-blue-50">
+            <span data-controller="svg"
+                data-svg-name-value="edit"
+                class="inline-flex  items-center justify-center"
+                aria-hidden="true">
+            </span>
+        </a>
+        {% if (is_granted('ROLE_ADMIN') and exercise.canBeArchived) %}
+            <a href="{{ path('bo_exercise_archived', {id: exercise.id}) }}"
+            data-action="click->archived#confirmDelete"
+            data-turbo-prefetch="false"
+            aria-label="Archiver {{ exercise.name }}"
+            title="Archiver {{ exercise.name }}"
+            class="inline-flex min-h-10 items-center gap-2
+                    rounded-lg px-3 py-2 font-medium
+                    text-orange-600 hover:bg-orange-50">
+                <span data-controller="svg"
+                    data-svg-name-value="archive"
+                    class="inline-flex  items-center justify-center"
+                    aria-hidden="true">
+                </span>
+            </a>
+        {% endif %}
+
+    </td>
+</tr>

@@ -37,6 +37,7 @@ class Session
 
     #[ORM\Column(length: 255)]
     #[NotBlank(groups:['session:create', 'session:update'])]
+    #[Groups(['session:detail', 'session:list'])]
     private ?string $target = null;
 
     #[ORM\Column]

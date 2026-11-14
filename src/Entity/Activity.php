@@ -25,7 +25,7 @@ class Activity
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
-    #[NotBlank(groups:['activity:create'])]
+    #[NotBlank(groups:['activity:create', 'activity:update'])]
     #[Groups(['activity:detail', 'activity:list', 'block:detail','session:detail', 'session:list'])]
     private ?string $name = null;
 

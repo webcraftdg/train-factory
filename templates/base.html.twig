@@ -11,23 +11,18 @@
         {% block javascripts %}
             {% block importmap %}{{ importmap('app') }}{% endblock %}
         {% endblock %}
+         <base href="/">
 
-        {% set frankenphp_hot_reload = app.request.server.get('FRANKENPHP_HOT_RELOAD') %}
-        {% if frankenphp_hot_reload %}
-        <meta name="frankenphp-hot-reload:url" content="{{ frankenphp_hot_reload }}">
-        <script src="https://cdn.jsdelivr.net/npm/idiomorph"></script>
-        <script src="https://cdn.jsdelivr.net/npm/frankenphp-hot-reload/+esm" type="module"></script>
-        {% endif %}
+        <link rel="stylesheet" href="{{ asset('angular/styles.css') }}">
     </head>
     <body class="flex min-h-screen flex-col bg-slate-100">
+        <main class="mx-auto w-full max-w-7xl flex-1 px-4 py-6 sm:px-6 lg:px-8">
+            {% block body %}
+                <app-root></app-root>
 
-        {% include 'components/_header.html.twig' %}
+                <script type="module" src="{{ asset('angular/main.js') }}"></script>
+            {% endblock %}
+        </main>
 
-    <main class="mx-auto w-full max-w-7xl flex-1 px-4 py-6 sm:px-6 lg:px-8">
-        {% block body %}{% endblock %}
-    </main>
-
-        {% include 'components/_footer.html.twig' %}
-
-</body>
+    </body>
 </html>

@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>{% block title %} {{ app.request.attributes.get('page_title')|default('Usine à Entrainements') }}{% endblock %}</title>
+        <link rel="icon"  type="image/svg+xml" href="{{ asset('icons/logo.svg') }}">
+         {% block stylesheets %}
+        {% endblock %}
+
+        {% block javascripts %}
+            {% block importmap %}{{ importmap('app') }}{% endblock %}
+        {% endblock %}
+
+        {% set frankenphp_hot_reload = app.request.server.get('FRANKENPHP_HOT_RELOAD') %}
+        {% if frankenphp_hot_reload %}
+        <meta name="frankenphp-hot-reload:url" content="{{ frankenphp_hot_reload }}">
+        <script src="https://cdn.jsdelivr.net/npm/idiomorph"></script>
+        <script src="https://cdn.jsdelivr.net/npm/frankenphp-hot-reload/+esm" type="module"></script>
+        {% endif %}
+    </head>
+    <body class="flex min-h-screen flex-col bg-slate-100">
+
+        {% include 'bo/components/_header.html.twig' %}
+
+    <main class="mx-auto w-full max-w-7xl flex-1 px-4 py-6 sm:px-6 lg:px-8">
+        {% block body %}{% endblock %}
+    </main>
+
+        {% include 'bo/components/_footer.html.twig' %}
+
+</body>
+</html>

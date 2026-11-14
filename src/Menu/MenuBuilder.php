@@ -25,28 +25,28 @@ class MenuBuilder
         if ($this->security->isGranted('IS_AUTHENTICATED')) {
             $items[] = [
                 'label' => 'Séances',
-                'route' => 'app_session_index',
-                'activePattern' => 'app_session',
+                'route' => 'bo_session_index',
+                'activePattern' => 'bo_session',
             ];
             $items[] = [
                 'label' => 'Blocs',
-                'route' => 'app_block_index',
-                'activePattern' => 'app_bloc',
+                'route' => 'bo_block_index',
+                'activePattern' => 'bo_bloc',
             ];
             $items[] =  [
                 'label' => 'Activités',
-                'route' => 'app_activity_index',
-                'activePattern' => 'app_activity_',
+                'route' => 'bo_activity_index',
+                'activePattern' => 'bo_activity_',
             ];
             $items[] =  [
                 'label' => 'Exercices',
-                'route' => 'app_exercise_index',
-                'activePattern' => 'app_exercise_',
+                'route' => 'bo_exercise_index',
+                'activePattern' => 'bo_exercise_',
             ];
             $items[] = [
                 'label' => 'Mon&nbsp;compte',
-                'route' => 'app_account',
-                'activePattern' => 'app_account',
+                'route' => 'bo_account',
+                'activePattern' => 'bo_account',
             ];
         }
 

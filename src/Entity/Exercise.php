@@ -30,7 +30,7 @@ class Exercise
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
-    #[NotBlank(message:'Le nom est obligatoire', groups:['exercise:create'])]
+    #[NotBlank(message:'Le nom est obligatoire', groups:['exercise:create', 'exercise:update'])]
     #[Groups([
         'exercise:detail',
         'exercises:list',

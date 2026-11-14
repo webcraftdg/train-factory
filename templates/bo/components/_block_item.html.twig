@@ -1,0 +1,131 @@
+
+<details class="group overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm"
+data-controller="archived"
+data-archived-context-name-value="{{ bloc.name}}"
+
+>
+
+    <summary class="flex cursor-pointer list-none flex-wrap items-center gap-3 px-4 py-4 transition-colors hover:bg-slate-50 sm:px-6 [&::-webkit-details-marker]:hidden">
+
+        <div class="min-w-0 flex-1">
+            <div class="flex flex-wrap items-center gap-2.5">
+
+                <h3 class="font-semibold text-slate-900">
+                    {{ bloc.name }}
+                </h3>
+
+                <span class="rounded-md bg-blue-50 px-2.5 py-1 text-xs font-medium text-blue-700">
+                    Durée : {{ bloc.duration }} min
+                </span>
+
+                <span class="rounded-md bg-slate-100 px-2.5 py-1 text-xs font-medium text-slate-600">
+                    {{ bloc.activities|length }} activité(s)
+                </span>
+
+            </div>
+
+            {% if bloc.description %}
+                <p class="mt-2 text-sm text-slate-500">
+                    {{ bloc.description }}
+                </p>
+            {% endif %}
+        </div>
+
+        <div class="ml-auto flex shrink-0 items-center gap-3">
+
+            <a href="{{ path('bo_block_edit', {id: bloc.id}) }}"
+               aria-label="Modifier {{ bloc.name }}"
+               title="Modifier {{ bloc.name }}"
+               onclick="event.stopPropagation()"
+               class="inline-flex min-h-10 min-w-10 items-center justify-center rounded-lg text-blue-600 transition-colors hover:bg-blue-50">
+
+                <span data-controller="svg"
+                      data-svg-name-value="edit"
+                      class="inline-flex items-center justify-center"
+                      aria-hidden="true">
+                </span>
+            </a>
+            {% if (is_granted('ROLE_ADMIN') and bloc.canBeArchived) %}
+                <a href="{{ path('bo_block_archived', {id: bloc.id}) }}"
+                    data-action="click->archived#confirmDelete"
+                    data-turbo-prefetch="false"
+                    aria-label="Archiver {{ bloc.name }}"
+                    title="Archiver {{ bloc.name }}"
+                    class="inline-flex min-h-10 items-center gap-2
+                            rounded-lg px-3 py-2 font-medium
+                            text-orange-600 hover:bg-orange-50">
+                    <span data-controller="svg"
+                        data-svg-name-value="archive"
+                        class="inline-flex  items-center justify-center"
+                        aria-hidden="true">
+                    </span>
+                </a>
+            {% endif %}
+
+            <span class="inline-flex items-center gap-1 text-sm font-medium text-blue-600">
+                <span class="hidden sm:inline group-open:hidden">
+                    Déployer
+                </span>
+                <span class="hidden sm:group-open:inline">
+                    Réduire
+                </span>
+
+                <svg class="h-4 w-4 transition-transform duration-200 group-open:rotate-180"
+                     viewBox="0 0 24 24"
+                     fill="none"
+                     stroke="currentColor"
+                     stroke-width="2"
+                     aria-hidden="true">
+                    <path d="m6 9 6 6 6-6"/>
+                </svg>
+            </span>
+
+        </div>
+
+    </summary>
+
+    <div class="border-t border-slate-100 bg-slate-50/70 px-4 py-3 sm:px-6">
+
+        {% for activity in bloc.activities %}
+
+            <div class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-200 py-3 last:border-b-0">
+
+                <div class="min-w-0 flex-1">
+
+                    <p class="text-sm font-semibold text-slate-800">
+                        {{ activity.name }}
+                    </p>
+
+                    {% if activity.description %}
+                        <p class="mt-1 text-sm text-slate-500">
+                            {{ activity.description }}
+                        </p>
+                    {% endif %}
+
+                </div>
+
+                <div class="flex flex-wrap items-center gap-2">
+
+                    <span class="rounded-md bg-blue-50 px-2.5 py-1 text-xs font-medium text-blue-700">
+                        Durée : {{ activity.duration }}
+                    </span>
+
+                    <span class="rounded-md bg-slate-200/70 px-2.5 py-1 text-xs font-medium text-slate-600">
+                        {{ activity.exercises|length }} exercice(s)
+                    </span>
+
+                </div>
+
+            </div>
+
+        {% else %}
+
+            <p class="py-4 text-center text-sm text-slate-500">
+                Aucune activité associée à ce bloc.
+            </p>
+
+        {% endfor %}
+
+    </div>
+
+</details>

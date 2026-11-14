@@ -6,6 +6,7 @@ use App\Entity\Session;
 use App\Entity\User;
 use App\Form\Api\ApiSessionType;
 use App\Repository\SessionRepository;
+use App\Service\Api\FormErrorFormatter;
 use App\Service\BlockResolver;
 use App\Service\ErrorResolver;
 use Doctrine\ORM\EntityManagerInterface;
@@ -29,7 +30,8 @@ final class SessionController extends AbstractController
         private SessionRepository $sessionRepository,
         private EntityManagerInterface $entityManager,
         private FormFactoryInterface $formFactory,
-        private BlockResolver $blockResolver
+        private BlockResolver $blockResolver,
+        private FormErrorFormatter $formErrorFormatter
     )
     {
     }
@@ -44,14 +46,14 @@ final class SessionController extends AbstractController
             new OA\Response(
                 response:200,
                 description: 'Liste des séances',
-                content: new Model(type:ApiSessionType::class, groups:['session:list'])
+                content: new Model(type:ApiSessionType::class, groups:['session:detail'])
             )
         ]
     )]
     public function list(): JsonResponse
     {
         $entities = $this->sessionRepository->findAll();
-        return $this->json($entities, JsonResponse::HTTP_OK, context:['groups' => ['session:list']]);
+        return $this->json($entities, JsonResponse::HTTP_OK, context:['groups' => ['session:detail']]);
     }
 
     #[Route('', name: 'create', methods:['POST'])]
@@ -163,7 +165,7 @@ final class SessionController extends AbstractController
                 $response = $this->json($entity, JsonResponse::HTTP_CREATED, context:['groups' => ['session:detail']]);
             }
         } else {
-            $response = $this->json($form->getErrors(true), JsonResponse::HTTP_BAD_REQUEST);
+            $response = $this->json(['errors' => $this->formErrorFormatter->format($form)], JsonResponse::HTTP_BAD_REQUEST);
         }
         return $response;
     }
