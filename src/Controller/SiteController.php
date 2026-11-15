@@ -10,8 +10,18 @@ use Symfony\Component\Routing\Attribute\Route;
 #[Route('', name:'app_')]
 final class SiteController extends AbstractController
 {
-    #[Route('/', name: 'site')]
+    #[Route(
+        '/{path}',
+        name: 'site',
+        requirements: [
+            'path' => '^(?!(?:api|bo|angular)(?:/|$)).*'
+        ],
+        defaults: ['path' => ''],
+        priority: -100,
+        methods: ['GET']
+    )]
     #[PageTitle(title:'Accueil')]
+
     public function index(): Response
     {
         return $this->render('site/index.html.twig');

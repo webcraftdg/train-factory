@@ -1,0 +1,99 @@
+
+<section class="w-full bg-slate-100 px-3 py-6 sm:px-6 lg:px-10">
+
+  <div class="mx-auto max-w-7xl">
+
+    <div class="mb-6">
+      <h1 class="text-2xl font-bold text-slate-900">
+        Fiche de séance
+      </h1>
+      <p class="mt-1 text-sm text-slate-500">
+        Construisez votre séance directement dans sa présentation finale.
+      </p>
+    </div>
+
+    <form [formGroup]="form" (ngSubmit)="onSubmit()" class="space-y-4">
+
+      <!-- En-tête de la fiche -->
+      <div class="overflow-hidden rounded-xl border border-slate-300 bg-white">
+
+        <div class="grid gap-4 p-4 md:grid-cols-[1fr_2fr]">
+          <div>
+            <label class="mb-1 block text-sm font-semibold text-slate-700">
+              Nom de la séance
+            </label>
+            <input
+              formControlName="name"
+              placeholder="Nom de la séance"
+              class="w-full rounded-md border border-slate-300 p-2 outline-none focus:border-blue-500"
+            />
+          </div>
+
+          <div>
+            <label class="mb-1 block text-sm font-semibold text-slate-700">
+              Thème
+            </label>
+            <input
+              formControlName="description"
+              placeholder="Ex. Gant rouge : décalage et débordement"
+              class="w-full rounded-md border border-slate-300 p-2 outline-none focus:border-blue-500"
+            />
+          </div>
+        </div>
+
+        <div class="border-t border-slate-200 px-4 pb-4">
+          <label class="mb-1 block text-sm font-semibold text-slate-700">
+            Public cible
+          </label>
+          <input
+            formControlName="target"
+            placeholder="Ex. Gant rouge"
+            class="w-full rounded-md border border-slate-300 p-2 outline-none focus:border-blue-500"
+          />
+        </div>
+
+        <div class="border-t border-slate-300 bg-slate-800 py-2 text-center font-bold tracking-widest text-white">
+          SALUT
+        </div>
+      </div>
+
+      <!-- Parties de la séance -->
+      <div class="space-y-4">
+
+        @for (block of blocks.controls; track block; let i = $index) {
+          <app-block
+            [form]="block"
+            [index]="i"
+            (remove)="removeBlock(i)"
+          />
+        }
+
+        <button
+          type="button"
+          (click)="addBlock()"
+          class="flex w-full items-center justify-center gap-2 rounded-xl border-2 border-dashed border-slate-300 bg-white px-4 py-5 font-semibold text-slate-600 transition hover:border-blue-500 hover:text-blue-600"
+        >
+          <span class="text-xl">+</span>
+          Ajouter une partie de séance
+        </button>
+      </div>
+
+      <!-- Fin de séance -->
+      <div class="rounded-lg bg-slate-800 py-3 text-center font-bold tracking-widest text-white">
+        SALUT
+      </div>
+
+      <!-- Actions -->
+      <div class="flex flex-wrap justify-end gap-3 pt-4">
+        <button
+          type="submit"
+          [disabled]="saving()"
+          class="rounded-lg bg-blue-600 px-8 py-3 font-semibold text-white transition hover:bg-blue-700 disabled:opacity-50"
+        >
+          Enregistrer la séance
+        </button>
+      </div>
+
+    </form>
+  </div>
+</section>

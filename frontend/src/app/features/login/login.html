@@ -1,0 +1,107 @@
+
+<div class="flex w-full flex-1 bg-sky-300">
+
+  <div class="grid w-full min-h-[calc(100vh-8rem)] grid-cols-1 lg:grid-cols-2">
+
+    <!-- Présentation -->
+    <section class="flex flex-col justify-center bg-slate-900 px-6 py-12 text-white sm:px-12 lg:px-16 xl:px-24">
+
+      <div class="w-full max-w-xl mx-auto">
+
+        <div class="mb-12 flex items-center gap-3">
+          <div class="flex h-12 w-12 items-center justify-center rounded-xl bg-blue-600 font-bold">
+            TF
+          </div>
+          <span class="text-2xl font-bold">TrainFactory</span>
+        </div>
+
+        <span class="inline-block rounded-full border border-blue-500/40 bg-blue-500/10 px-4 py-2 text-sm text-blue-300">
+          Votre espace d'entraînement
+        </span>
+
+        <h1 class="mt-8 text-4xl font-bold leading-tight sm:text-5xl">
+          Chaque séance
+          <span class="block text-blue-400">commence ici.</span>
+        </h1>
+
+        <p class="mt-8 max-w-lg text-lg leading-relaxed text-slate-300">
+          Créez, organisez et réutilisez vos séances
+          d'entraînement, quel que soit votre sport.
+        </p>
+
+        <p class="mt-16 text-sm text-slate-400">
+          Organisez. Entraînez. Progressez.
+        </p>
+
+      </div>
+    </section>
+
+    <!-- Connexion -->
+    <section class="flex items-center justify-center bg-white px-6 py-12 sm:px-12 lg:px-16">
+
+      <div class="w-full max-w-md">
+
+        <h2 class="text-3xl font-bold text-slate-900">
+          Bon retour !
+        </h2>
+
+        <p class="mt-2 text-sm text-slate-500">
+          Connectez-vous pour accéder à vos séances.
+        </p>
+
+        <form
+          [formGroup]="form"
+          (ngSubmit)="onSubmit()"
+          class="mt-10 space-y-6"
+        >
+
+          <div>
+            <label for="email" class="mb-2 block text-sm font-medium text-slate-700">
+              Adresse e-mail
+            </label>
+
+            <input
+              id="email"
+              type="email"
+              formControlName="email"
+              autocomplete="username"
+              placeholder="vous@exemple.fr"
+              class="w-full rounded-lg border border-slate-300 px-4 py-3 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20"
+            />
+          </div>
+
+          <div>
+            <label for="password" class="mb-2 block text-sm font-medium text-slate-700">
+              Mot de passe
+            </label>
+
+            <input
+              id="password"
+              type="password"
+              formControlName="password"
+              autocomplete="current-password"
+              placeholder="Votre mot de passe"
+              class="w-full rounded-lg border border-slate-300 px-4 py-3 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20"
+            />
+          </div>
+
+          @if (errorMessage()) {
+            <p role="alert" class="rounded-lg bg-red-50 p-3 text-sm text-red-600">
+              {{ errorMessage() }}
+            </p>
+          }
+
+          <button
+            type="submit"
+            [disabled]="loading()"
+            class="w-full rounded-lg bg-blue-600 px-4 py-3 font-semibold text-white transition hover:bg-blue-700 disabled:opacity-50"
+          >
+            {{ loading() ? 'Connexion...' : 'Se connecter →' }}
+          </button>
+
+        </form>
+      </div>
+    </section>
+
+  </div>
+</div>

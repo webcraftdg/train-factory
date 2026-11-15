@@ -31,11 +31,14 @@ class AngularAsset extends AbstractExtension
             $extension
         ));
 
-        if (!$files || count($files) !== 1) {
+        if (empty($files)) {
             throw new \RuntimeException(
-                sprintf('Asset Angular introuvable ou ambigu : %s.%s', $name, $extension)
+                sprintf('Asset Angular introuvable : %s.%s', $name, $extension)
             );
         }
+
+        // Du plus récent au plus ancien
+        usort($files, fn($a, $b) => filemtime($b) <=> filemtime($a));
 
         return '/angular/' . basename($files[0]);
     }

@@ -15,16 +15,13 @@
 
         <link rel="stylesheet" href="{{ angular_asset('styles', 'css') }}">
     </head>
-    <body class="flex min-h-screen flex-col bg-slate-100">
-        <main class="mx-auto w-full max-w-7xl flex-1 px-4 py-6 sm:px-6 lg:px-8">
+    <body>
             {% block body %}
                 <app-root></app-root>
-
                   <script
                     type="module"
                     src="{{ angular_asset('main', 'js') }}">
                 </script>
             {% endblock %}
-        </main>
     </body>
 </html>

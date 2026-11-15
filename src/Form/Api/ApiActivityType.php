@@ -2,7 +2,6 @@
 
 namespace App\Form\Api;
 
-use App\Entity\Activity;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
