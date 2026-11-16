@@ -1,98 +1,121 @@
 
 <section
   [formGroup]="form()"
-  class="overflow-hidden rounded-xl border border-slate-300 bg-white shadow-sm"
+  class="w-full border-x border-t border-slate-500 bg-white"
 >
-  <!-- En-tête du bloc -->
-  <div class="flex flex-wrap items-center justify-between gap-3 bg-slate-800 px-4 py-3 text-white">
-    <div class="flex min-w-0 flex-1 items-center gap-3">
-      <span class="text-xs font-semibold text-slate-300">
-        {{ index() + 1 }}.
+  <!-- Barre supérieure du bloc -->
+  <div class="flex min-h-11 items-center gap-4 border-b border-slate-500 bg-slate-200 px-3">
+    <label class="flex min-w-0 flex-1 items-center gap-4">
+      <span class="shrink-0 text-xs font-bold text-slate-800">
+        Partie de séance
       </span>
 
       <input
         formControlName="name"
-        placeholder="Nom de la partie (ex. Échauffement)"
-        aria-label="Nom de la partie"
-        class="min-w-0 flex-1 border-b border-transparent bg-transparent py-1 font-semibold outline-none placeholder:text-slate-400 focus:border-blue-300"
+        aria-label="Nom de la partie de séance"
+        class="min-w-0 flex-1 bg-transparent py-2 font-bold text-slate-900 outline-none"
       />
-    </div>
+    </label>
+
+    <button
+      type="button"
+      (click)="collapsed.set(!collapsed())"
+      class="shrink-0 text-sm font-semibold text-blue-700"
+    >
+      {{ collapsed() ? '▸ Déplier' : '▾ Replier' }}
+    </button>
 
     <button
       type="button"
       (click)="remove.emit()"
-      class="rounded-md p-2 text-slate-300 hover:bg-red-600 hover:text-white"
-      aria-label="Supprimer cette partie"
-      title="Supprimer cette partie"
+      class="px-2 text-xl font-bold text-red-600"
+      aria-label="Supprimer la partie"
     >
-      Supprimer
+      ×
     </button>
   </div>
 
-  <!-- Informations du bloc -->
-  <div class="grid gap-4 border-b border-slate-200 bg-slate-50 p-4 md:grid-cols-2">
-    <div>
-      <label class="mb-1 block text-xs font-semibold text-slate-600">
-        Description
-      </label>
-      <textarea
-        formControlName="description"
-        rows="2"
-        placeholder="Description de cette partie..."
-        class="w-full resize-y rounded-md border border-slate-300 bg-white p-2 text-sm outline-none focus:border-blue-500"
-      ></textarea>
-    </div>
+  @if (!collapsed()) {
+    <!-- Description à gauche, tableau à droite -->
+    <div class="grid grid-cols-1 md:grid-cols-[18%_82%]">
 
-    <div class="space-y-3">
-      <div>
-        <label class="mb-1 block text-xs font-semibold text-slate-600">
-          Objectif
-        </label>
-        <input
-          formControlName="objective"
-          class="w-full rounded-md border border-slate-300 bg-white p-2 text-sm outline-none focus:border-blue-500"
-        />
+      <!-- Description du bloc -->
+      <div class="border-b border-slate-400 md:border-r">
+        <textarea
+          formControlName="description"
+          rows="4"
+          placeholder="Description du bloc..."
+          aria-label="Description du bloc"
+          class="h-full min-h-28 w-full resize-y bg-transparent p-3 text-sm outline-none"
+        ></textarea>
       </div>
 
-      <div>
-        <label class="mb-1 block text-xs font-semibold text-slate-600">
-          Consigne générale
-        </label>
-        <input
-          formControlName="instruction"
-          class="w-full rounded-md border border-slate-300 bg-white p-2 text-sm outline-none focus:border-blue-500"
-        />
+      <!-- Partie droite -->
+      <div class="min-w-0">
+        <div class="overflow-x-auto">
+          <table class="w-full min-w-[700px] table-fixed border-collapse text-sm">
+
+            <colgroup>
+              <col style="width: 22%" />
+              <col style="width: 22%" />
+              <col style="width: 24%" />
+              <col style="width: 22%" />
+              <col style="width: 10%" />
+            </colgroup>
+
+            <thead>
+              <tr class="bg-slate-100 text-slate-800">
+                <th class="border-b border-r border-slate-400 p-3">
+                  Exercice 1
+                </th>
+                <th class="border-b border-r border-slate-400 p-3">
+                  Exercice 2
+                </th>
+                <th class="border-b border-r border-slate-400 p-3">
+                  Consigne
+                </th>
+                <th class="border-b border-r border-slate-400 p-3">
+                  Objectif
+                </th>
+                <th class="border-b border-slate-400 p-2">
+                  Durée
+                </th>
+              </tr>
+            </thead>
+
+            <tbody>
+                @for (activity of activities.controls; track activity; let i = $index) {
+                    <tr
+                      app-activity
+                      [form]="activity"
+                      (remove)="removeActivity(i)"
+                    ></tr>
+                  }
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Barre inférieure du bloc -->
+        <div class="flex flex-wrap items-center justify-between gap-3 border-t border-slate-400 bg-slate-50 p-2">
+
+          <button
+            type="button"
+            (click)="addActivity()"
+            class="rounded-md border border-dashed border-blue-400 bg-blue-50 px-4 py-2 text-sm font-semibold text-blue-700 hover:bg-blue-100"
+          >
+            + Ajouter une ligne de travail
+          </button>
+
+          <label class="flex items-center gap-2 text-xs text-slate-800">
+            <input
+              type="checkbox"
+              [checked]="separator()"
+              (change)="toggleSeparator()"
+            />
+            Séparation renforcée après cette partie
+          </label>
+        </div>
       </div>
     </div>
-  </div>
-
-  <!-- Tableau des activités -->
-  <div class="overflow-x-auto">
-    <table class="w-full min-w-[760px] border-collapse text-sm">
-      <thead class="bg-slate-100 text-slate-700">
-        <tr>
-          <th class="border border-slate-200 p-3 text-left">Tireur A</th>
-          <th class="border border-slate-200 p-3 text-left">Tireur B</th>
-          <th class="border border-slate-200 p-3 text-left">Consigne</th>
-          <th class="border border-slate-200 p-3 text-left">Objectifs</th>
-          <th class="w-28 border border-slate-200 p-3 text-left">Durée</th>
-          <th class="w-12 border border-slate-200 p-3"></th>
-        </tr>
-      </thead>
-
-      <tbody>
-        <tr>
-          <td colspan="6" class="p-8 text-center text-slate-400">
-            Aucune activité dans cette partie.
-          </td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
-
-  <div class="flex justify-end border-t border-slate-200 bg-white p-3">
-    <span class="text-sm text-slate-400">
-      Les activités seront ajoutées à l'étape suivante.
-    </span>
-  </div>
+  }
 </section>

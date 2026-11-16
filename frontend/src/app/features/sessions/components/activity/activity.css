@@ -1,0 +1,13 @@
+:host {
+  vertical-align: top;
+}
+
+textarea {
+  min-height: 3rem;
+  overflow-wrap: anywhere;
+}
+
+input,
+textarea {
+  box-sizing: border-box;
+}

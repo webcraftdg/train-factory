@@ -1,5 +1,6 @@
 
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject, signal} from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 import {
   FormArray,
   FormBuilder,
@@ -26,6 +27,14 @@ export class SessionEditor {
 
   readonly saving = signal(false);
   readonly error = signal<string | null>(null);
+  private readonly route = inject(ActivatedRoute);
+
+  constructor() {
+    const sessionId = this.route.snapshot.paramMap.get('id');
+    if (sessionId === null) {
+      this.initializeDefaultBlocks();
+    }
+}
 
   readonly form = this.fb.group({
     id: this.fb.control<number | null>(null),
@@ -39,12 +48,12 @@ export class SessionEditor {
     return this.form.controls.blocks;
   }
 
-  addBlock(): void {
+  addBlock(name = ''): void {
     const block = createBlock();
 
     const blockForm = this.fb.group({
-      id: this.fb.control<number | null>(block.id),
-      name: this.fb.nonNullable.control(block.name),
+      id: this.fb.control<number | null>(null),
+      name: this.fb.nonNullable.control(name || block.name),
       description: this.fb.nonNullable.control(block.description),
       objective: this.fb.nonNullable.control(block.objective),
       instruction: this.fb.nonNullable.control(block.instruction),
@@ -68,4 +77,16 @@ export class SessionEditor {
 
     console.log('Session JSON', session);
   }
+
+  private initializeDefaultBlocks(): void {
+    const defaultBlocks = [
+      'Échauffement',
+      'Corps de séance',
+      'Retour au calme'
+    ];
+
+    for (const name of defaultBlocks) {
+      this.addBlock(name);
+    }
+}
 }

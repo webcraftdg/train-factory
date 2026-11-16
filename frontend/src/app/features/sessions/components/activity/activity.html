@@ -1,0 +1,196 @@
+
+<ng-container [formGroup]="form()">
+
+  @if (hydration) {
+
+    <!-- Hydratation : une cellule fusionnée -->
+    <td
+      colspan="5"
+      class="border-b border-slate-400 bg-slate-100 px-3 py-2 text-center"
+    >
+      <div class="flex items-center justify-center gap-3 text-xs font-semibold text-slate-800">
+        <span>Hydratation / pause</span>
+
+        <input
+          formControlName="duration"
+          type="text"
+          aria-label="Durée de la pause"
+          class="w-20 border-b border-slate-400 bg-transparent px-1 py-1 text-center outline-none focus:border-blue-500"
+        />
+
+        <button
+          type="button"
+          (click)="remove.emit()"
+          aria-label="Supprimer la pause"
+          title="Supprimer la pause"
+          class="text-red-600 hover:text-red-800"
+        >
+          ×
+        </button>
+      </div>
+    </td>
+
+  } @else {
+
+    <!-- Exercice 1 -->
+    <td
+      [attr.colspan]="exercises.length === 1 ? 2 : 1"
+      class="border-b border-r border-slate-400 align-top"
+    >
+      <div
+        [formGroup]="exercises.at(0)"
+        class="relative min-h-28 p-2"
+      >
+        <input
+          type="text"
+          [value]="labelA()"
+          (input)="labelA.set($any($event.target).value)"
+          aria-label="Intitulé de l'exercice 1"
+          class="mb-2 w-full border-b border-dashed border-slate-300 bg-transparent pb-1 pr-7 text-xs font-bold outline-none focus:border-blue-500"
+        />
+
+        <textarea
+          formControlName="name"
+          rows="3"
+          placeholder="Actions du tireur A"
+          aria-label="Exercice 1"
+          class="w-full resize-y bg-transparent text-sm outline-none placeholder:text-slate-400"
+        ></textarea>
+
+        @if (exercises.length === 2) {
+          <button
+            type="button"
+            (click)="removeExercise(0)"
+            aria-label="Supprimer l'exercice 1"
+            title="Supprimer l'exercice"
+            class="absolute right-1 top-1 rounded border border-slate-200 bg-white px-1.5 text-red-600 hover:bg-red-50"
+          >
+            ×
+          </button>
+        }
+
+        @if (exercises.length === 1) {
+          <button
+            type="button"
+            (click)="addExercise()"
+            class="mt-1 text-xs font-semibold text-blue-700 hover:underline"
+          >
+            + Ajouter un deuxième exercice
+          </button>
+        }
+      </div>
+    </td>
+
+    <!-- Exercice 2 -->
+    @if (exercises.length === 2) {
+      <td class="border-b border-r border-slate-400 align-top">
+        <div
+          [formGroup]="exercises.at(1)"
+          class="relative min-h-28 p-2"
+        >
+          <input
+            type="text"
+            [value]="labelB()"
+            (input)="labelB.set($any($event.target).value)"
+            aria-label="Intitulé de l'exercice 2"
+            class="mb-2 w-full border-b border-dashed border-slate-300 bg-transparent pb-1 pr-7 text-xs font-bold outline-none focus:border-blue-500"
+          />
+
+          <textarea
+            formControlName="name"
+            rows="3"
+            placeholder="Actions du tireur B"
+            aria-label="Exercice 2"
+            class="w-full resize-y bg-transparent text-sm outline-none placeholder:text-slate-400"
+          ></textarea>
+
+          <button
+            type="button"
+            (click)="removeExercise(1)"
+            aria-label="Supprimer l'exercice 2"
+            title="Supprimer l'exercice"
+            class="absolute right-1 top-1 rounded border border-slate-200 bg-white px-1.5 text-red-600 hover:bg-red-50"
+          >
+            ×
+          </button>
+        </div>
+      </td>
+    }
+
+    <!-- Consigne -->
+    @if (showInstruction()) {
+      <td class="border-b border-r border-slate-400 align-top">
+        <div class="relative min-h-28 p-2">
+          <textarea
+            formControlName="instruction"
+            rows="3"
+            placeholder="Consigne technique"
+            aria-label="Consigne"
+            class="w-full resize-y bg-transparent pr-5 text-sm outline-none placeholder:text-slate-400"
+          ></textarea>
+
+          <button
+            type="button"
+            (click)="removeInstruction()"
+            aria-label="Supprimer la consigne"
+            title="Supprimer la consigne"
+            class="absolute right-1 top-1 rounded border border-slate-200 bg-white px-1.5 text-red-600 hover:bg-red-50"
+          >
+            ×
+          </button>
+        </div>
+      </td>
+    }
+
+    <!-- Objectif -->
+    <td
+      [attr.colspan]="showInstruction() ? 1 : 2"
+      class="border-b border-r border-slate-400 align-top"
+    >
+      <div class="min-h-28 p-2">
+        <textarea
+          formControlName="objective"
+          rows="3"
+          placeholder="Objectif pédagogique"
+          aria-label="Objectif"
+          class="w-full resize-y bg-transparent text-sm outline-none placeholder:text-slate-400"
+        ></textarea>
+
+        @if (!showInstruction()) {
+          <button
+            type="button"
+            (click)="restoreInstruction()"
+            class="mt-1 text-xs font-semibold text-blue-700 hover:underline"
+          >
+            + Rétablir la consigne
+          </button>
+        }
+      </div>
+    </td>
+
+    <!-- Durée et suppression de l'activité -->
+    <td class="border-b border-slate-400 align-top">
+      <div class="relative min-h-28 p-2 pt-9">
+        <input
+          formControlName="duration"
+          type="text"
+          placeholder="2[2+1]"
+          aria-label="Durée de l'activité"
+          class="w-full bg-transparent text-right text-sm outline-none placeholder:text-slate-400"
+        />
+
+        <button
+          type="button"
+          (click)="remove.emit()"
+          aria-label="Supprimer cette ligne de travail"
+          title="Supprimer cette ligne"
+          class="absolute right-1 top-1 rounded border border-slate-200 bg-white px-1.5 text-red-600 hover:bg-red-50"
+        >
+          ×
+        </button>
+      </div>
+    </td>
+
+  }
+
+</ng-container>
