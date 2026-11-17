@@ -23,8 +23,6 @@ type ExerciseForm = FormGroup<{
 export class ActivityComponent {
   readonly form = input.required<FormGroup>();
   readonly remove = output<void>();
-
-  // États de présentation propres à cette ligne
   readonly labelA = signal('Tireur A');
   readonly labelB = signal('Tireur B');
   readonly showInstruction = signal(true);
@@ -37,17 +35,22 @@ export class ActivityComponent {
     return this.form().get('hydration')?.value === true;
   }
 
+toggleHydration(checked: boolean): void {
+  this.form().get('hydration')?.setValue(checked);
+}
+
   addExercise(): void {
     if (this.exercises.length >= 2) return;
 
     this.exercises.push(
       new FormGroup({
         id: new FormControl<number | null>(null),
-        name: new FormControl('', { nonNullable: true }),
+        name: new FormControl('Tireur B', { nonNullable: true }),
         description: new FormControl('', { nonNullable: true })
       })
     );
   }
+
 
   removeExercise(index: number): void {
     // Une activité de travail doit conserver un exercice.
