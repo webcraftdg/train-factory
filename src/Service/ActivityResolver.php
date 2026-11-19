@@ -53,6 +53,7 @@ final class ActivityResolver
             $activity->setObjective($item['objective'] ?? null);
             $activity->setInstruction($item['instruction'] ?? null);
             $activity->setDuration($item['duration'] ?? null);
+            $activity->setHydration($item['hydration'] ?? false);
             $violations = $this->validator->validate($activity, groups:['Default', $group]);
             if (count($violations) > 0) {
                 /** @var ConstraintViolationInterface $violation */

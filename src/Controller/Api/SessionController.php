@@ -145,6 +145,29 @@ final class SessionController extends AbstractController
         return $this->json(null, JsonResponse::HTTP_NO_CONTENT);
     }
 
+    #[Route('/{id}', name: 'get', methods:['GET'])]
+    #[IsGranted(User::ROLE_CREATOR)]
+    #[OA\Get(
+        path: '/api/sessions/{id}',
+        summary: 'Lit une séance',
+        tags:['Sessions'],
+        responses: [
+            new OA\Response(
+                response:200,
+                description: 'Lecture',
+                content: new Model(type:ApiSessionType::class, groups:['session:detail'])
+            ),
+             new OA\Response(
+                response:404,
+                description: 'Non trouvé',
+            )
+        ]
+    )]
+    public function get(Session $entity): JsonResponse
+    {
+        return $this->json($entity, JsonResponse::HTTP_CREATED, context:['groups' => ['session:detail']]);
+    }
+
     private function manageActivity(FormInterface $form, array $data, Session $entity) : Response
     {
         if ($form->isValid() === true) {

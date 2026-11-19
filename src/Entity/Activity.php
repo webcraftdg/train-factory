@@ -72,7 +72,7 @@ class Activity
     private Collection $blocks;
 
     #[ORM\Column(options:['default' => false])]
-    #[Groups(['activity:detail', 'activity:list'])]
+    #[Groups(['activity:detail', 'activity:list', 'session:detail'])]
     private ?bool $hydration = false;
 
     #[ORM\Column(nullable: true)]

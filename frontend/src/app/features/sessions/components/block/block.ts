@@ -4,12 +4,19 @@ import {
   FormArray,
   FormBuilder,
   FormGroup,
-  ReactiveFormsModule
+  ReactiveFormsModule,
+  Validators
 } from '@angular/forms';
 
 import { ActivityComponent } from '../activity/activity';
 import { createActivity } from '../../models/session';
 
+import {
+  createActivityForm,
+  createExerciseForm
+} from '../../forms/session-form.factory';
+
+const durationPattern = /^(?:\d+|\[\d+\+\d+\]|\d+\[\d+\+\d+\])$/;
 @Component({
   selector: 'app-block',
   standalone: true,
@@ -21,6 +28,8 @@ export class BlockComponent {
   readonly form = input.required<FormGroup>();
   readonly index = input.required<number>();
   readonly remove = output<void>();
+
+
 
   constructor(private readonly fb: FormBuilder) {}
 
@@ -36,35 +45,35 @@ export class BlockComponent {
     return this.form().get('activities') as FormArray<FormGroup>;
   }
 
-  addActivity(hydration = false): void {
+  addActivity(): void {
     const activity = createActivity();
 
-    const activityForm = this.fb.group({
-      id: this.fb.control<number | null>(null),
-      name: this.fb.nonNullable.control(
-        hydration ? 'Hydratation' : activity.name
-      ),
-      description: this.fb.nonNullable.control(activity.description),
-      objective: this.fb.nonNullable.control(activity.objective),
-      instruction: this.fb.nonNullable.control(activity.instruction),
-      duration: this.fb.nonNullable.control(
-        hydration ? '2 minutes' : activity.duration
-      ),
-      hydration: this.fb.nonNullable.control(hydration),
-      exercises: this.fb.array<FormGroup>([])
-    });
+    const blockName = this.form().get('name')?.value || 'Bloc';
+    const activityNumber = this.activities.length + 1;
 
-   if (!hydration) {
-    for (let i = 0; i < 2; i++) {
-      activityForm.controls.exercises.push(
-        this.fb.group({
-          id: this.fb.control<number | null>(null),
-          name: this.fb.nonNullable.control(''),
-          description: this.fb.nonNullable.control('')
-        })
-      );
-    }
-  }
+    activity.name = `${blockName} - Activité ${activityNumber}`;
+
+    // Création de l'activité avec ses validateurs
+    const activityForm = createActivityForm(this.fb, activity);
+
+    // Ajout des deux exercices par défaut
+    const exercises = activityForm.get('exercises') as FormArray<FormGroup>;
+
+    exercises.push(
+      createExerciseForm(this.fb, {
+        id: null,
+        name: 'Tireur A',
+        description: ''
+      })
+    );
+
+    exercises.push(
+      createExerciseForm(this.fb, {
+        id: null,
+        name: 'Tireur B',
+        description: ''
+      })
+    );
 
     this.activities.push(activityForm);
   }

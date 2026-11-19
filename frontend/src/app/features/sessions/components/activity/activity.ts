@@ -2,10 +2,14 @@
 import { Component, input, output, signal } from '@angular/core';
 import {
   FormArray,
+  FormBuilder,
   FormControl,
   FormGroup,
-  ReactiveFormsModule
+  ReactiveFormsModule,
+  Validators
 } from '@angular/forms';
+
+import { createExerciseForm } from '../../forms/session-form.factory';
 
 type ExerciseForm = FormGroup<{
   id: FormControl<number | null>;
@@ -23,9 +27,9 @@ type ExerciseForm = FormGroup<{
 export class ActivityComponent {
   readonly form = input.required<FormGroup>();
   readonly remove = output<void>();
-  readonly labelA = signal('Tireur A');
-  readonly labelB = signal('Tireur B');
   readonly showInstruction = signal(true);
+
+  constructor(private readonly fb: FormBuilder) {}
 
   get exercises(): FormArray<ExerciseForm> {
     return this.form().get('exercises') as FormArray<ExerciseForm>;
@@ -35,18 +39,18 @@ export class ActivityComponent {
     return this.form().get('hydration')?.value === true;
   }
 
-toggleHydration(checked: boolean): void {
-  this.form().get('hydration')?.setValue(checked);
-}
+  toggleHydration(checked: boolean): void {
+    this.form().get('hydration')?.setValue(checked);
+  }
 
   addExercise(): void {
     if (this.exercises.length >= 2) return;
 
     this.exercises.push(
-      new FormGroup({
-        id: new FormControl<number | null>(null),
-        name: new FormControl('Tireur B', { nonNullable: true }),
-        description: new FormControl('', { nonNullable: true })
+      createExerciseForm(this.fb, {
+        id: null,
+        name: 'Tireur',
+        description: ''
       })
     );
   }

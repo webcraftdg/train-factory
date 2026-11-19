@@ -10,7 +10,7 @@ import { Auth } from '../../../core/auth/auth';
   styleUrl: './header.css'
 })
 export class Header {
-    readonly auth = inject(Auth);
+  readonly auth = inject(Auth);
   private readonly router = inject(Router);
 
   logout(): void {
