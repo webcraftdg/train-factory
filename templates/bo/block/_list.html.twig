@@ -1,0 +1,16 @@
+
+    {% for bloc in blocks %}
+
+        {% include 'bo/components/_block_item.html.twig' with {
+            bloc: bloc
+        } only %}
+
+    {% else %}
+
+        <div class="rounded-xl border border-slate-200 bg-white px-5 py-10 text-center text-sm text-slate-500">
+            Aucun bloc disponible.
+        </div>
+
+    {% endfor %}
+
+</div>

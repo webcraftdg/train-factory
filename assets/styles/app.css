@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@import "./savate-sheet.css";
 
 body {
     background-color: skyblue;

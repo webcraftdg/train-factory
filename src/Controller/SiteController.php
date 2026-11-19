@@ -2,17 +2,28 @@
 
 namespace App\Controller;
 
+use App\Attribute\PageTitle;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
-use Symfony\Component\Security\Http\Attribute\IsGranted;
 
+#[Route('', name:'app_')]
 final class SiteController extends AbstractController
 {
-    #[Route('', name: 'app_site')]
-    #[IsGranted('IS_AUTHENTICATED')]
+    #[Route(
+        '/{path}',
+        name: 'site',
+        requirements: [
+            'path' => '^(?!(?:api|bo|angular)(?:/|$)).*'
+        ],
+        defaults: ['path' => ''],
+        priority: -100,
+        methods: ['GET']
+    )]
+    #[PageTitle(title:'Accueil')]
+
     public function index(): Response
     {
-       return  $this->redirectToRoute('app_session_index');
+        return $this->render('site/index.html.twig');
     }
 }

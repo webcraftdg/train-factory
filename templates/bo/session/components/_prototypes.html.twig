@@ -1,0 +1,85 @@
+<template id="tf-block-template">
+    <section class="tf-block" data-block>
+        <div class="tf-blockbar">
+            <div class="tf-blockname">
+                <label>Partie de séance <input data-field="name" value="Corps de séance" aria-label="Nom de la partie de séance"></label>
+            </div>
+            <button type="button" class="tf-fold" data-role="fold" aria-expanded="true">▾ Replier</button>
+            <button type="button" class="tf-delete" data-role="remove-block" aria-label="Supprimer cette partie">×</button>
+        </div>
+        <div data-role="block-content">
+            <div class="tf-block-layout">
+                <div class="tf-block-description">
+                    <textarea rows="3" data-field="blockDescription" aria-label="Description du bloc" placeholder="Description du bloc…"></textarea>
+                </div>
+                <div class="tf-block-main">
+                    <div class="tf-table-scroll">
+                        <table class="tf-table">
+                            <colgroup>
+                                <col class="tf-col-a">
+                                <col class="tf-col-b">
+                                <col class="tf-col-consigne">
+                                <col class="tf-col-objectif">
+                                <col class="tf-col-duree">
+                            </colgroup>
+                            <thead>
+                                <tr>
+                                    <th>Exercice 1</th>
+                                    <th>Exercice 2</th>
+                                    <th>Consigne</th>
+                                    <th>Objectif</th>
+                                    <th>Durée</th>
+                                </tr>
+                            </thead>
+                            <tbody data-role="activity-list"></tbody>
+                        </table>
+                    </div>
+                    <div class="tf-block-footer">
+                        <button type="button" class="tf-add" data-role="add-activity">＋ Ajouter une ligne de travail</button>
+                        <label class="tf-check"><input type="checkbox" data-field="separator"> Séparation renforcée après cette partie</label>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</template>
+<template id="tf-activity-template">
+    <tr class="tf-activity" data-activity>
+        <td data-label="Tireur A" data-role="exercise-cell">
+            <div class="tf-cell tf-exercise">
+                <input class="tf-exercise-label" data-field="labelA" value="Tireur A" aria-label="Intitulé de la colonne exercice 1">
+                <textarea rows="3" data-field="tireurA" placeholder="Actions du tireur A" aria-label="Tireur A"></textarea>
+                <button type="button" class="tf-cell-x" data-role="remove-exercise" aria-label="Supprimer le tireur A">×</button>
+            </div>
+        </td>
+        <td data-label="Tireur B" data-role="exercise-cell">
+            <div class="tf-cell tf-exercise">
+                <input class="tf-exercise-label" data-field="labelB" value="Tireur B" aria-label="Intitulé de la colonne exercice 2">
+                <textarea rows="3" data-field="tireurB" placeholder="Actions du tireur B" aria-label="Tireur B"></textarea>
+                <button type="button" class="tf-cell-x" data-role="remove-exercise" aria-label="Supprimer le tireur B">×</button>
+            </div>
+        </td>
+        <td data-label="Consigne" data-role="consigne-cell">
+            <div class="tf-cell">
+                <textarea rows="3" data-field="instruction" placeholder="Consigne technique" aria-label="Consigne"></textarea>
+                <button type="button" class="tf-cell-x" data-role="remove-consigne" aria-label="Supprimer la consigne">×</button>
+            </div>
+        </td>
+        <td data-label="Objectif" data-role="objective-cell">
+            <div class="tf-cell">
+                <textarea rows="3" data-field="objective" placeholder="Objectif pédagogique" aria-label="Objectif"></textarea>
+            </div>
+        </td>
+        <td data-label="Durée">
+            <div class="tf-cell tf-duration">
+                <input data-field="duration" aria-label="Durée" placeholder="2[2+1]">
+                <button type="button" class="tf-cell-x" data-role="remove-activity" aria-label="Supprimer cette ligne">×</button>
+            </div>
+        </td>
+    </tr>
+    <tr class="tf-hydration" data-hydration>
+        <td colspan="5">
+            <label>Hydratation / pause <input type="number" min="0" step="1" value="2" data-field="hydration" aria-label="Durée de la pause en minutes"> min</label>
+        </td>
+    </tr>
+</template>

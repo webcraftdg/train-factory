@@ -1,0 +1,159 @@
+
+{{ form_start(form, {
+    action:action,
+    attr: {
+        class: 'space-y-6'
+    }
+}) }}
+
+<div class="mx-auto w-full max-w-5xl space-y-6">
+
+    <div class="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
+
+        {# En-tête #}
+        <div class="border-b border-slate-100 px-4 py-5 sm:px-7">
+            <h2 class="text-xl font-semibold text-slate-900">
+                {{ form_title|default('Informations du bloc') }}
+            </h2>
+
+            <p class="mt-1 text-sm text-slate-500">
+                Définissez les caractéristiques du bloc.
+            </p>
+        </div>
+
+        <div class="space-y-7 px-4 py-6 sm:px-7">
+
+            {{ form_errors(form) }}
+
+            {# Informations générales #}
+            <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
+
+                <div class="md:col-span-2">
+                    {{ form_label(form.name, null, {
+                        label_attr: {
+                            class: 'mb-2 block text-sm font-medium text-slate-700'
+                        }
+                    }) }}
+
+                    {{ form_widget(form.name, {
+                        attr: {
+                            class: 'w-full rounded-lg border border-slate-300 px-4 py-3 text-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20'
+                        }
+                    }) }}
+
+                    {{ form_errors(form.name) }}
+                </div>
+                <div class="md:col-span-2">
+                    {{ form_label(form.description, null, {
+                        label_attr: {
+                            class: 'mb-2 block text-sm font-medium text-slate-700'
+                        }
+                    }) }}
+
+                    {{ form_widget(form.description, {
+                        attr: {
+                            rows: 4,
+                            class: 'w-full rounded-lg border border-slate-300 px-4 py-3 text-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20'
+                        }
+                    }) }}
+
+                    {{ form_errors(form.description) }}
+                </div>
+
+                <div>
+                    {{ form_label(form.objective, null, {
+                        label_attr: {
+                            class: 'mb-2 block text-sm font-medium text-slate-700'
+                        }
+                    }) }}
+
+                    {{ form_widget(form.objective, {
+                        attr: {
+                            rows: 4,
+                            class: 'w-full rounded-lg border border-slate-300 px-4 py-3 text-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20'
+                        }
+                    }) }}
+
+                    {{ form_errors(form.objective) }}
+                </div>
+
+                <div>
+                    {{ form_label(form.instruction, null, {
+                        label_attr: {
+                            class: 'mb-2 block text-sm font-medium text-slate-700'
+                        }
+                    }) }}
+
+                    {{ form_widget(form.instruction, {
+                        attr: {
+                            rows: 4,
+                            class: 'w-full rounded-lg border border-slate-300 px-4 py-3 text-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20'
+                        }
+                    }) }}
+
+                    {{ form_errors(form.instruction) }}
+                </div>
+
+            </div>
+
+            {# Exercices associés #}
+            <section
+                    class="border-t border-slate-100 pt-7"
+                    data-controller="items-selector"
+                    data-items-selector-mode-value="cards"
+                    data-items-selector-draggable-value="true"
+                    data-items-selector-url-value="{{path('bo_activity_async_show', {id : '{id}'})}}"
+                    data-action="modal-action:items-selector_update@window->items-selector#updateSelect"
+                     >
+
+                    {{ form_widget(form.activityOrder, {
+                        attr: {
+                            'data-items-selector-target':'order'
+                        }
+                    }) }}
+                {% include 'bo/components/_select-picker.html.twig' with {
+                    title:'Activités associées',
+                    subtitle:'Sélectionnez les activités pour ce bloc.',
+                    emptyMessage:'Aucun exercice sélectionné.',
+                    inputLabel: 'bibliothèque d\'activités',
+                    inputPlaceholder: 'Sélectionner une activité',
+                    buttonActionUrl :'bo_activity_async_new',
+                    buttonActionLabel:'Ajouter une activité',
+                    activeCreate:(activeCreate | default(false))
+                }%}
+
+                {# Champ Symfony réel : conservé pour la soumission #}
+                <div class="hidden">
+                    {{ form_widget(form.activities, {
+                        attr: {
+                            'data-items-selector-target': 'select'
+                        }
+                    }) }}
+                </div>
+
+                {{ form_errors(form.activities) }}
+
+            </section>
+        </div>
+
+        {# Actions #}
+        <div class="flex flex-col-reverse gap-3 border-t border-slate-100 bg-slate-50 px-4 py-5 sm:flex-row sm:justify-end sm:px-7">
+
+            <a href="{{ path('bo_block_index') }}"
+               class="inline-flex min-h-11 items-center justify-center rounded-lg border border-slate-300 bg-white px-5 py-2.5 text-sm font-medium text-slate-700 hover:bg-slate-100">
+                Annuler
+            </a>
+
+            <button type="submit"
+                    class="inline-flex min-h-11 items-center justify-center rounded-lg bg-blue-600 px-5 py-2.5 text-sm font-semibold text-white hover:bg-blue-700">
+
+                {{ button_label|default('Enregistrer le bloc') }}
+
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+{{ form_end(form) }}
