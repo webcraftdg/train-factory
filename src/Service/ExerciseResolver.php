@@ -23,8 +23,10 @@ final class ExerciseResolver
      *
      * @param  array                $data
      * @param  \App\Entity\Activity $entity
+     * @param  int                  $activityIndex
+     * @param  bool                 $clone
      *
-     * @return array
+     * @return ErrorResolver
      */
     public function resolve(array $data, Activity $entity, int $activityIndex = 0): ErrorResolver
     {

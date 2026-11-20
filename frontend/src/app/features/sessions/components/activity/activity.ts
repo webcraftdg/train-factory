@@ -45,7 +45,6 @@ export class ActivityComponent {
 
   addExercise(): void {
     if (this.exercises.length >= 2) return;
-
     this.exercises.push(
       createExerciseForm(this.fb, {
         id: null,

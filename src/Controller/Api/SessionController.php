@@ -9,6 +9,7 @@ use App\Repository\SessionRepository;
 use App\Service\Api\FormErrorFormatter;
 use App\Service\BlockResolver;
 use App\Service\ErrorResolver;
+use App\Service\SessionNormalizer;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormFactoryInterface;
@@ -31,7 +32,8 @@ final class SessionController extends AbstractController
         private EntityManagerInterface $entityManager,
         private FormFactoryInterface $formFactory,
         private BlockResolver $blockResolver,
-        private FormErrorFormatter $formErrorFormatter
+        private FormErrorFormatter $formErrorFormatter,
+        private SessionNormalizer $sessionNormalizer
     )
     {
     }
@@ -121,6 +123,43 @@ final class SessionController extends AbstractController
         return $this->manageActivity($form, $jsonContent, $entity);
     }
 
+
+
+    #[Route('/{id}/clone', name: 'clone', methods:['POST'])]
+    #[IsGranted(User::ROLE_CREATOR)]
+    #[OA\Post(
+        path: '/api/sessions/{id}/clone',
+        summary: 'Dupliquer une séance',
+        tags:['Sessions'],
+        requestBody: new OA\RequestBody(
+            required: false,
+            content: []
+        ),
+        responses: [
+            new OA\Response(
+                response:202,
+                description: 'Dupliquer',
+                content: new Model(type:ApiSessionType::class, groups:['session:detail'])
+            ),
+             new OA\Response(
+                response:400,
+                description: 'Erreur de données',
+            )
+        ]
+    )]
+    public function clone(Session $entity, Request $request): JsonResponse
+    {
+        $clone = new Session();
+        $data = $this->sessionNormalizer->normalize($entity);
+        unset($data['id']);
+        $data['name'] = 'Copie '.$entity->getName();
+        $form = $this->formFactory->create(ApiSessionType::class, $clone, [
+            'validation_groups' => ['Default', 'session:create'],
+        ]);
+        $form->submit($data);
+        return $this->manageActivity($form, $data, $clone, true);
+    }
+
     #[Route('/{id}', name: 'delete', methods:['DELETE'])]
     #[IsGranted(User::ROLE_CREATOR)]
     #[OA\Delete(
@@ -168,7 +207,7 @@ final class SessionController extends AbstractController
         return $this->json($entity, JsonResponse::HTTP_CREATED, context:['groups' => ['session:detail']]);
     }
 
-    private function manageActivity(FormInterface $form, array $data, Session $entity) : Response
+    private function manageActivity(FormInterface $form, array $data, Session $entity, bool $clone = false) : Response
     {
         if ($form->isValid() === true) {
             $this->entityManager->beginTransaction();
@@ -176,7 +215,8 @@ final class SessionController extends AbstractController
             /** @var ErrorResolver $errorResolver */
             $errorResolver = $this->blockResolver->resolve(
                 data: $blocks,
-                entity: $entity
+                entity: $entity,
+                clone: $clone
             );
             if ($errorResolver->isValid() === false) {
                 $response = $this->json($errorResolver->errors, JsonResponse::HTTP_BAD_REQUEST);

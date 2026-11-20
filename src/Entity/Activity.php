@@ -323,4 +323,18 @@ class Activity
 
         return $this;
     }
+
+    public function toArray() : array
+    {
+        return [
+            'id' => $this->getId(),
+            'name' => $this->getName(),
+            'description' => $this->getDescription(),
+            'objective' => $this->getObjective(),
+            'instruction' => $this->getInstruction(),
+            'duration' => $this->getDuration(),
+            'hydration' => $this->isHydration(),
+            'exercises' => []
+        ];
+    }
 }

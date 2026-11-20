@@ -21,6 +21,7 @@ export class Sessions implements OnInit {
   readonly loading = signal(true);
   readonly deletingId = signal<number | null>(null);
   readonly downloadingId = signal<number | null>(null);
+  readonly duplicatingId = signal<number | null>(null);
   readonly error = signal<string | null>(null);
   ngOnInit(): void {
     this.loadSessions();
@@ -107,6 +108,28 @@ export class Sessions implements OnInit {
         console.error('Erreur export :', error);
         this.downloadingId.set(null);
         alert("Impossible de télécharger la séance.");
+      }
+    });
+  }
+
+  duplicateSession(session: Session): void {
+    if (session.id === null || this.duplicatingId() !== null) {
+      return;
+    }
+
+    this.duplicatingId.set(session.id);
+    this.error.set(null);
+
+    this.sessionsService.clone(session.id).subscribe({
+      next: (duplicate) => {
+        this.sessions.update(items => [duplicate, ...items]);
+        this.duplicatingId.set(null);
+      },
+
+      error: (error) => {
+        console.error('Erreur duplication :', error);
+        this.duplicatingId.set(null);
+        alert('Impossible de dupliquer cette séance.');
       }
     });
   }
