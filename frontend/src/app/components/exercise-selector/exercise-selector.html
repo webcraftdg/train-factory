@@ -1,0 +1,69 @@
+<div
+  class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4"
+  role="presentation"
+>
+  <section
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="exercise-selector-title"
+    class="w-full max-w-2xl rounded-xl bg-white shadow-xl"
+  >
+    <header class="flex items-center justify-between border-b p-4">
+      <h2 id="exercise-selector-title" class="text-lg font-bold">
+        Choisir un exercice
+      </h2>
+
+      <button
+        type="button"
+        (click)="closed.emit()"
+        aria-label="Fermer"
+        class="text-xl text-slate-500 hover:text-slate-900"
+      >
+        ×
+      </button>
+    </header>
+
+    <div class="p-4">
+      <input
+        type="search"
+        placeholder="Rechercher par nom ou description..."
+        aria-label="Rechercher un exercice"
+        [value]="search()"
+        (input)="search.set($any($event.target).value)"
+        class="mb-4 w-full rounded-lg border border-slate-300 p-3 outline-none focus:border-blue-500"
+      />
+
+      <div class="max-h-96 overflow-y-auto">
+        @for (exercise of filteredExercises(); track exercise.id) {
+          <button
+            type="button"
+            (click)="selectExercise(exercise)"
+            class="flex w-full flex-col border-b border-slate-200 p-3 text-left hover:bg-blue-50"
+          >
+            <span class="text-sm font-semibold text-slate-900">
+              {{ exercise.name }}
+            </span>
+
+            <span class="mt-1 line-clamp-2 text-xs text-slate-600">
+              {{ exercise.description }}
+            </span>
+          </button>
+        } @empty {
+          <p class="py-6 text-center text-sm text-slate-500">
+            Aucun exercice trouvé.
+          </p>
+        }
+      </div>
+    </div>
+
+    <footer class="flex justify-end border-t p-3">
+      <button
+        type="button"
+        (click)="closed.emit()"
+        class="rounded-lg border border-slate-300 px-4 py-2 text-sm hover:bg-slate-100"
+      >
+        Annuler
+      </button>
+    </footer>
+  </section>
+</div>

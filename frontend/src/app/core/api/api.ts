@@ -6,5 +6,5 @@ export enum Api {
   SESSIONS_EXPORT = '/api/exports/sessions',
   ACTIVITIES = '/api/activities',
   BLOCKS = '/api/blocks',
-  EXERCISES = '/api/exercises'
+  EXERCISES = '/api/exercices'
 }

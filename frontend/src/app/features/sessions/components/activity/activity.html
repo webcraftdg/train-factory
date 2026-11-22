@@ -3,67 +3,55 @@
 
     <!-- EXERCICE 1 -->
     <td
-      [attr.colspan]="exercises.length === 1 ? 2 : 1"
       class="border-b border-r border-slate-400 align-top"
     >
-      <div
-        [formGroup]="exercises.at(0)"
-        class="relative min-h-28 p-2"
-      >
-        <input
-          formControlName="name"
-          type="text"
-          placeholder="Tireur A / Pour tous"
-          aria-label="Nom de l'exercice"
-          class="mb-2 w-full border-b border-dashed border-slate-300 bg-transparent pb-1 pr-7 text-xs font-bold outline-none focus:border-blue-500"
-        />
-
-        <textarea
-          formControlName="description"
-          rows="3"
-          placeholder="Description de l'exercice"
-          aria-label="Description de l'exercice 1"
-          class="w-full resize-y bg-transparent text-sm outline-none placeholder:text-slate-400"
-        ></textarea>
-        @if (exercises.at(0).get('description')?.invalid && exercises.at(0).get('description')?.touched) {
-          <p class="mt-1 text-xs text-red-600">
-            La description de l'exercice est obligatoire.
-          </p>
-        }
-
-        @if (exercises.length === 2) {
-          <button
-            type="button"
-            (click)="removeExercise(0)"
-            aria-label="Supprimer l'exercice"
-            title="Supprimer cet exercice"
-            class="absolute right-1 top-1 bg-white px-1.5 text-red-600 hover:bg-red-50"
-          >
-          <svg width="20px" height="20px" viewBox="0 0 1024 1024" fill="currentColor" class="icon"  version="1.1" xmlns="http://www.w3.org/2000/svg"><path d="M512 897.6c-108 0-209.6-42.4-285.6-118.4-76-76-118.4-177.6-118.4-285.6 0-108 42.4-209.6 118.4-285.6 76-76 177.6-118.4 285.6-118.4 108 0 209.6 42.4 285.6 118.4 157.6 157.6 157.6 413.6 0 571.2-76 76-177.6 118.4-285.6 118.4z m0-760c-95.2 0-184.8 36.8-252 104-67.2 67.2-104 156.8-104 252s36.8 184.8 104 252c67.2 67.2 156.8 104 252 104 95.2 0 184.8-36.8 252-104 139.2-139.2 139.2-364.8 0-504-67.2-67.2-156.8-104-252-104z" fill="" /><path d="M707.872 329.392L348.096 689.16l-31.68-31.68 359.776-359.768z" fill="" /><path d="M328 340.8l32-31.2 348 348-32 32z" fill="currentColor" /></svg>
-
-          </button>
-        }
-
-        @if (exercises.length === 1) {
-          <button
-            type="button"
-            (click)="addExercise()"
-            class="mt-1 text-xs font-semibold text-blue-700 hover:underline"
-          >
-            + Ajouter un exercice
-          </button>
-        }
-      </div>
-    </td>
-
-    <!-- EXERCICE 2 -->
-    @if (exercises.length === 2) {
-      <td class="border-b border-r border-slate-400 align-top">
+      @if (exerciseCount() > 0) {
         <div
-          [formGroup]="exercises.at(1)"
+          [formGroup]="exercises.at(0)"
           class="relative min-h-28 p-2"
         >
           <input
+            formControlName="name"
+            type="text"
+            placeholder="Tireur A / Pour tous"
+            aria-label="Nom de l'exercice"
+            class="mb-2 w-full border-b border-dashed border-slate-300 bg-transparent pb-1 pr-7 text-xs font-bold outline-none focus:border-blue-500"
+          />
+
+          <textarea
+            formControlName="description"
+            rows="3"
+            placeholder="Description de l'exercice"
+            aria-label="Description de l'exercice 1"
+            class="w-full resize-y bg-transparent text-sm outline-none placeholder:text-slate-400"
+          ></textarea>
+          @if (exercises.at(0).get('description')?.invalid && exercises.at(0).get('description')?.touched) {
+            <p class="mt-1 text-xs text-red-600">
+              La description de l'exercice est obligatoire.
+            </p>
+          }
+
+          @if (exerciseCount() === 2) {
+            <button
+              type="button"
+              (click)="removeExercise(0)"
+              aria-label="Supprimer l'exercice"
+              title="Supprimer cet exercice"
+              class="absolute right-1 top-1 bg-white px-1.5 text-red-600 hover:bg-red-50"
+            >
+            <svg width="20px" height="20px" viewBox="0 0 1024 1024" fill="currentColor" class="icon"  version="1.1" xmlns="http://www.w3.org/2000/svg"><path d="M512 897.6c-108 0-209.6-42.4-285.6-118.4-76-76-118.4-177.6-118.4-285.6 0-108 42.4-209.6 118.4-285.6 76-76 177.6-118.4 285.6-118.4 108 0 209.6 42.4 285.6 118.4 157.6 157.6 157.6 413.6 0 571.2-76 76-177.6 118.4-285.6 118.4z m0-760c-95.2 0-184.8 36.8-252 104-67.2 67.2-104 156.8-104 252s36.8 184.8 104 252c67.2 67.2 156.8 104 252 104 95.2 0 184.8-36.8 252-104 139.2-139.2 139.2-364.8 0-504-67.2-67.2-156.8-104-252-104z" fill="" /><path d="M707.872 329.392L348.096 689.16l-31.68-31.68 359.776-359.768z" fill="" /><path d="M328 340.8l32-31.2 348 348-32 32z" fill="currentColor" /></svg>
+            </button>
+          }
+        </div>
+      }
+    </td>
+
+
+    <!-- EXERCICE 2 -->
+    <td class="border-b border-r border-slate-400 align-top">
+      @if (exerciseCount() === 2) {
+        <div [formGroup]="exercises.at(1)" class="relative min-h-28 p-2">
+             <input
             formControlName="name"
             type="text"
             placeholder="Tireur B"
@@ -95,8 +83,9 @@
 
           </button>
         </div>
-      </td>
-    }
+      }
+    </td>
+
 
     <!-- CONSIGNE -->
     @if (showInstruction()) {

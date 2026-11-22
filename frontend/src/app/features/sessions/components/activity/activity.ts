@@ -5,10 +5,9 @@ import {
   FormBuilder,
   FormControl,
   FormGroup,
-  ReactiveFormsModule,
-  Validators
+  ReactiveFormsModule
 } from '@angular/forms';
-
+import type { Exercise } from '../../models/session';
 import { createExerciseForm } from '../../forms/session-form.factory';
 
 type ExerciseForm = FormGroup<{
@@ -19,6 +18,7 @@ type ExerciseForm = FormGroup<{
 
 @Component({
   selector: 'tr[app-activity]',
+  exportAs: 'appActivity',
   standalone: true,
   imports: [ReactiveFormsModule],
   templateUrl: './activity.html',
@@ -28,6 +28,8 @@ export class ActivityComponent {
   readonly form = input.required<FormGroup>();
   readonly remove = output<void>();
   readonly showInstruction = signal(true);
+  readonly exerciseCount = signal(0);
+  readonly exerciseSelectorOpen = signal(false);
 
   constructor(private readonly fb: FormBuilder) {}
 
@@ -44,14 +46,41 @@ export class ActivityComponent {
   }
 
   addExercise(): void {
-    if (this.exercises.length >= 2) return;
+    const length = this.exercises.length;
+    if (length >= 2) return;
+
+    const name = length === 0 ? 'Tireur A' : 'Tireur B';
+
     this.exercises.push(
       createExerciseForm(this.fb, {
         id: null,
-        name: 'Tireur',
+        name,
         description: ''
       })
     );
+    this.exerciseCount.set(this.exercises.length);
+  }
+
+  selectExistingExercise(exercise: Exercise): void {
+    if (this.exercises.length >= 2) return;
+
+    this.exercises.push(
+      createExerciseForm(this.fb, {
+        id: exercise.id,
+        name: exercise.name,
+        description: exercise.description
+      })
+    );
+
+    this.exerciseCount.set(this.exercises.length);
+    this.exerciseSelectorOpen.set(false);
+  }
+
+
+  openExerciseSelector(): void {
+    if (this.exercises.length >= 2) return;
+
+    this.exerciseSelectorOpen.set(true);
   }
 
 
@@ -60,6 +89,7 @@ export class ActivityComponent {
     if (this.exercises.length <= 1) return;
 
     this.exercises.removeAt(index);
+    this.exerciseCount.set(this.exercises.length);
   }
 
   removeInstruction(): void {
