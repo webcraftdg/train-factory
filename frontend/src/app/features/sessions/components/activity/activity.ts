@@ -1,5 +1,5 @@
 
-import { Component, input, output, signal } from '@angular/core';
+import { Component, input, output, signal, OnInit } from '@angular/core';
 import {
   FormArray,
   FormBuilder,
@@ -24,7 +24,7 @@ type ExerciseForm = FormGroup<{
   templateUrl: './activity.html',
   styleUrl: './activity.css'
 })
-export class ActivityComponent {
+export class ActivityComponent  implements OnInit {
   readonly form = input.required<FormGroup>();
   readonly remove = output<void>();
   readonly showInstruction = signal(true);
@@ -39,6 +39,10 @@ export class ActivityComponent {
 
   get hydration(): boolean {
     return this.form().get('hydration')?.value === true;
+  }
+
+  ngOnInit(): void {
+    this.exerciseCount.set(this.exercises.length);
   }
 
   toggleHydration(checked: boolean): void {
@@ -86,8 +90,6 @@ export class ActivityComponent {
 
   removeExercise(index: number): void {
     // Une activité de travail doit conserver un exercice.
-    if (this.exercises.length <= 1) return;
-
     this.exercises.removeAt(index);
     this.exerciseCount.set(this.exercises.length);
   }

@@ -204,7 +204,7 @@ final class SessionController extends AbstractController
     )]
     public function get(Session $entity): JsonResponse
     {
-        return $this->json($entity, JsonResponse::HTTP_CREATED, context:['groups' => ['session:detail']]);
+        return $this->json($entity, JsonResponse::HTTP_OK, context:['groups' => ['session:detail']]);
     }
 
     private function manageActivity(FormInterface $form, array $data, Session $entity, bool $clone = false) : Response
@@ -223,8 +223,8 @@ final class SessionController extends AbstractController
                 $this->entityManager->rollback();
             } else {
                 $this->entityManager->persist($entity);
-                $this->entityManager->commit();
                 $this->entityManager->flush();
+                $this->entityManager->commit();
                 $response = $this->json($entity, JsonResponse::HTTP_CREATED, context:['groups' => ['session:detail']]);
             }
         } else {

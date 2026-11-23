@@ -109,12 +109,6 @@ class SessionXlsxWriter implements DataWriterInterface
             $this->writeBlock($sheet, $line, $block);
         }
         $this->writeLine($sheet, $line, 'SALUT', 'A', 'F');
-        /*
-        $last = max(4, $line - 1);
-        $sheet->getPageSetup()->setPrintArea("A1:F{$last}");
-        $sheet->getStyle("A4:F{$last}")->getBorders()->getAllBorders()
-            ->setBorderStyle(Border::BORDER_THIN)->getColor()->setARGB('FFD5DCE4');
-            */
     }
 
     private function writeLine(Worksheet $sheet, int $line, string $text, string $colStart, ?string $colEnd = null)
@@ -132,62 +126,25 @@ class SessionXlsxWriter implements DataWriterInterface
         $sheet->getRowDimension($line++)->setRowHeight(self::ROW_HEIGHT);
 
         $globalDescription = trim((string) ($block['description'] ?? ''));
-        $globalObjective = trim((string) ($block['objective'] ?? ''));
-        $globalInstruction = trim((string) ($block['instruction'] ?? ''));
-
-        $hasDescription = false;
-        $hasInstruction = false;
-        $hasObjective = false;
         $descLines = [$line];
-        $instrLines = [$line];
-        $objLines = [$line];
-        foreach (($block['activities'] ?? []) as $activity) {
+        $activities = $block['activities'] ?? [];
+        foreach ($activities as $activity) {
             if (!is_array($activity)) {
                 continue;
             }
             $hydration = ($activity['hydration']) ?? false;
-            $this->writeActivity($sheet, $line, $activity, $hasDescription, $hasInstruction, $hasObjective);
-            $description = ($activity['description']) ?? $globalDescription;
-            $instruction = ($activity['instruction']) ?? $globalObjective;
-            $objective = ($activity['objective']) ?? $globalInstruction;
-            if($hasDescription === false) {
-                $descLines[] = $line;
-            }
-            /*
-            if ($hasDescription === true) {
-                if (count($descLines) > 1) {
-                    $this->mergeVertical($sheet, $descLines, $globalDescription);
-                    $hasDescription = false;
-                }
-                $descLines = [];
-            } else {
-                $descLines[] = $line;
-            }
-            if ($hasInstruction ===true) {
-                if (count($instrLines) > 1) {
-                    $this->mergeVertical($sheet, $instrLines, $instruction, 'D');
-                    $hasInstruction = false;
-                }
-                $instrLines = [];
-            } else {
-                $instrLines[] = $line;
-            }
-            if ($hasObjective === true && count($objLines) > 1) {
-                if (count($objLines) > 1) {
-                    $this->mergeVertical($sheet, $objLines, $objective, 'E');
-                    $hasObjective = false;
-                }
-                $objLines = [];
-            } else {
-                $objLines[] = $line;
-            }
-                */
+            $this->writeActivity($sheet, $line, $activity);
+            $descLines[] = $line;
 
             if ($hydration === true) {
-                $this->writeLine($sheet, $line, 'Hydratation', 'A', 'E');
+                $this->writeLine($sheet, $line, 'Hydratation', 'B', 'E');
                 $this->writeLine($sheet, $line, '2 min', 'F', 'F');
                 $line ++;
             }
+        }
+        //Last column merged if activities
+        if (count($descLines) > count($activities)) {
+            array_pop($descLines);
         }
 
         if (count($descLines) > 1) {
@@ -225,10 +182,7 @@ class SessionXlsxWriter implements DataWriterInterface
     private function writeActivity(
         Worksheet $sheet,
         int &$line,
-        array $activity,
-        bool &$hasDescription = false,
-        bool &$hasInstruction = false,
-        bool &$hasObjective = false
+        array $activity
     ): void
     {
         $exercises = array_values(array_filter(
@@ -239,9 +193,6 @@ class SessionXlsxWriter implements DataWriterInterface
         // Convention TEMPORAIRE, à remplacer par une donnée métier :
         // premier exercice = Tireur A, deuxième = Tireur B.
         // Les exercices supplémentaires sont affichés dans la colonne A.
-        $hasDescription = (empty($activity['description']) === false);
-        $hasInstruction = (empty($activity['instruction']) === false);
-        $hasObjective = (empty($activity['objective']) === false);
         $values = [];
         $value = [];
         foreach($exercises as $index => $exercise) {
@@ -364,8 +315,8 @@ class SessionXlsxWriter implements DataWriterInterface
     {
         $sheet->mergeCells($range);
         $first = explode(':', $range)[0];
-        $sheet->setCellValue($first, $text);
         $this->styleRange($sheet, $range, $kind);
+        $sheet->setCellValue($first, $text);
     }
 
     private function styleRange(Worksheet $sheet, string $range, string $kind): void
