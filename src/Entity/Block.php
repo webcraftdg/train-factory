@@ -83,9 +83,7 @@ class Block
         $this->dateCreate = new DateTime();
     }
 
-    #[ORM\PrePersist]
-    #[ORM\PreUpdate]
-    public function updateDuration(): void
+    public function setTotalDuration(): void
     {
         $durations = $this->getActivities()->reduce(
             fn(int $total, Activity $activity) =>

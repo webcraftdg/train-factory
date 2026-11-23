@@ -49,11 +49,11 @@ final class BlockResolver
                     continue;
                 }
             }
+            /**@var Block $block */
             $block->setName($item['name'] ?? '');
             $block->setDescription($item['description'] ?? null);
             $block->setObjective($item['objective'] ?? null);
             $block->setInstruction($item['instruction'] ?? null);
-            $block->setDuration($item['duration'] ?? 0);
             $violations = $this->validator->validate($block, groups:['Default', $group]);
             if (count($violations) > 0) {
                 /** @var ConstraintViolationInterface $violation */
@@ -75,11 +75,13 @@ final class BlockResolver
                 if ($errorResolver->isValid() === false) {
                     $errors = array_merge($errors, $errorResolver->errors);
                 } else {
+                    $block->setTotalDuration();
                     $entity->addBlock($block);
                 }
 
             }
         }
+        $entity->setTotalDuration();
         return new ErrorResolver($entity, $errors);
     }
 }

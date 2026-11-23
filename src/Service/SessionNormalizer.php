@@ -48,7 +48,7 @@ final class SessionNormalizer
         $data = [];
         /** @var Exercise $exercise */
         foreach($exercises as $exercise) {
-            $data[] = $exercise->toArray();;
+            $data[] = $exercise->toArray();
         }
         return $data;
     }

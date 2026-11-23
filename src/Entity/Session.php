@@ -74,9 +74,8 @@ class Session
     {
         $this->dateCreate = new DateTime();
     }
-    #[ORM\PrePersist]
-    #[ORM\PreUpdate]
-    public function updateDuration(): void
+
+    public function setTotalDuration(): void
     {
         $durations = $this->getBlocks()->reduce(
             fn(int $total, Block $block) =>

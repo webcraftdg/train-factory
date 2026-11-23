@@ -149,24 +149,7 @@ class SessionXlsxWriter implements DataWriterInterface
 
         if (count($descLines) > 1) {
             $this->mergeVertical($sheet, $descLines, $globalDescription);
-            $hasDescription = false;
         }
-        /*
-        if ($hasDescription ===false && empty($descLines) === false) {
-            $this->mergeVertical($sheet, $descLines, $globalDescription);
-            $descLines = [];
-            $hasDescription = false;
-        }
-        if ($hasInstruction ===false && empty($instrLines) === false) {
-            $this->mergeVertical($sheet, $instrLines, $globalInstruction, 'D');
-            $instrLines = [];
-            $hasInstruction = false;
-        }
-        if ($hasObjective ===false && empty($objLines) === false) {
-            $this->mergeVertical($sheet, $objLines, $globalObjective, 'E');
-            $objLines = [];
-            $hasObjective = false;
-        }*/
     }
 
 
@@ -217,9 +200,11 @@ class SessionXlsxWriter implements DataWriterInterface
         }
 
         $finaleValues = [];
+        $activityDuration = $activity['duration'] ?? 0;
+        $activityDuration = (ctype_digit($activityDuration) === true) ? $activityDuration.' mn': $activityDuration;
         foreach($values as $item) {
             array_unshift($item, (($activity['description']) ?? null));
-            array_push($item, (($activity['instruction']) ?? null), (($activity['objective']) ?? null), (string) ($activity['duration'] ?? ''));
+            array_push($item, (($activity['instruction']) ?? null), (($activity['objective']) ?? null), (string)$activityDuration);
             $item = array_combine(['A', 'B', 'C', 'D', 'E', 'F'], $item);
             $finaleValues[] = $item;
         }
@@ -250,19 +235,6 @@ class SessionXlsxWriter implements DataWriterInterface
             }
             $line ++;
         }
-        /*
-        $this->styleRange($sheet, "A{$line}:F{$line}", 'activity');
-        $sheet->getStyle("A{$line}")->getFont()->setBold(true);
-        $sheet->getStyle("F{$line}")->getFont()->setBold(true);
-        $sheet->getStyle("F{$line}")->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
-
-        $maxLines = 1;
-        $charsPerLine = [23, 30, 30, 34, 27, 12];
-        foreach ($values as $i => $value) {
-            $maxLines = max($maxLines, $this->estimatedLines($value, $charsPerLine[$i]));
-        }
-        $sheet->getRowDimension($line++)->setRowHeight(min(125, max(30, 13 * $maxLines + 7)));
-        */
     }
 
     private function configureLineStyle(
@@ -337,20 +309,6 @@ class SessionXlsxWriter implements DataWriterInterface
             ->getColor()->setARGB($style['font']);
         $s->getAlignment()->setWrapText(true)
             ->setVertical(Alignment::VERTICAL_CENTER);
-    }
-
-    private function estimatedLines(string $value, int $charsPerLine): int
-    {
-        $lines = 0;
-        foreach (explode("\n", $value) as $segment) {
-            $lines += max(1, (int) ceil(mb_strlen($segment) / $charsPerLine));
-        }
-        return $lines;
-    }
-
-    private function height(string $value, int $charsPerLine, int $minimum, int $maximum): int
-    {
-        return min($maximum, max($minimum, 13 * $this->estimatedLines($value, $charsPerLine) + 6));
     }
 
     private function uniqueSheetTitle(string $title): string
