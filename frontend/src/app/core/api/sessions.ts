@@ -29,6 +29,12 @@ export class SessionsService {
       session
     );
   }
+  clone(id: number): Observable<Session> {
+  return this.http.post<Session>(
+    `${Api.SESSIONS}/${id}/clone`,
+    {}
+  );
+}
 
   delete(id: number): Observable<void> {
     return this.http.delete<void>(`${Api.SESSIONS}/${id}`);

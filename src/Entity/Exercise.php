@@ -221,4 +221,13 @@ class Exercise
     {
         return $this->getActivities()->isEmpty() && $this->dateArchived === null;
     }
+
+    public function toArray() : array
+    {
+        return [
+            'id' => $this->getId(),
+            'name' => $this->getName(),
+            'description' => $this->getDescription(),
+        ];
+    }
 }

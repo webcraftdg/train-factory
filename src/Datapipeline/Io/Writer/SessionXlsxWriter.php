@@ -109,12 +109,6 @@ class SessionXlsxWriter implements DataWriterInterface
             $this->writeBlock($sheet, $line, $block);
         }
         $this->writeLine($sheet, $line, 'SALUT', 'A', 'F');
-        /*
-        $last = max(4, $line - 1);
-        $sheet->getPageSetup()->setPrintArea("A1:F{$last}");
-        $sheet->getStyle("A4:F{$last}")->getBorders()->getAllBorders()
-            ->setBorderStyle(Border::BORDER_THIN)->getColor()->setARGB('FFD5DCE4');
-            */
     }
 
     private function writeLine(Worksheet $sheet, int $line, string $text, string $colStart, ?string $colEnd = null)
@@ -132,84 +126,30 @@ class SessionXlsxWriter implements DataWriterInterface
         $sheet->getRowDimension($line++)->setRowHeight(self::ROW_HEIGHT);
 
         $globalDescription = trim((string) ($block['description'] ?? ''));
-        $globalObjective = trim((string) ($block['objective'] ?? ''));
-        $globalInstruction = trim((string) ($block['instruction'] ?? ''));
-
-        $hasDescription = false;
-        $hasInstruction = false;
-        $hasObjective = false;
         $descLines = [$line];
-        $instrLines = [$line];
-        $objLines = [$line];
-        foreach (($block['activities'] ?? []) as $activity) {
+        $activities = $block['activities'] ?? [];
+        foreach ($activities as $activity) {
             if (!is_array($activity)) {
                 continue;
             }
             $hydration = ($activity['hydration']) ?? false;
-            $this->writeActivity($sheet, $line, $activity, $hasDescription, $hasInstruction, $hasObjective);
-            $description = ($activity['description']) ?? $globalDescription;
-            $instruction = ($activity['instruction']) ?? $globalObjective;
-            $objective = ($activity['objective']) ?? $globalInstruction;
-            if($hasDescription === false) {
-                $descLines[] = $line;
-            }
-            /*
-            if ($hasDescription === true) {
-                if (count($descLines) > 1) {
-                    $this->mergeVertical($sheet, $descLines, $globalDescription);
-                    $hasDescription = false;
-                }
-                $descLines = [];
-            } else {
-                $descLines[] = $line;
-            }
-            if ($hasInstruction ===true) {
-                if (count($instrLines) > 1) {
-                    $this->mergeVertical($sheet, $instrLines, $instruction, 'D');
-                    $hasInstruction = false;
-                }
-                $instrLines = [];
-            } else {
-                $instrLines[] = $line;
-            }
-            if ($hasObjective === true && count($objLines) > 1) {
-                if (count($objLines) > 1) {
-                    $this->mergeVertical($sheet, $objLines, $objective, 'E');
-                    $hasObjective = false;
-                }
-                $objLines = [];
-            } else {
-                $objLines[] = $line;
-            }
-                */
+            $this->writeActivity($sheet, $line, $activity);
+            $descLines[] = $line;
 
             if ($hydration === true) {
-                $this->writeLine($sheet, $line, 'Hydratation', 'A', 'E');
+                $this->writeLine($sheet, $line, 'Hydratation', 'B', 'E');
                 $this->writeLine($sheet, $line, '2 min', 'F', 'F');
                 $line ++;
             }
         }
+        //Last column merged if activities
+        if (count($descLines) > count($activities)) {
+            array_pop($descLines);
+        }
 
         if (count($descLines) > 1) {
             $this->mergeVertical($sheet, $descLines, $globalDescription);
-            $hasDescription = false;
         }
-        /*
-        if ($hasDescription ===false && empty($descLines) === false) {
-            $this->mergeVertical($sheet, $descLines, $globalDescription);
-            $descLines = [];
-            $hasDescription = false;
-        }
-        if ($hasInstruction ===false && empty($instrLines) === false) {
-            $this->mergeVertical($sheet, $instrLines, $globalInstruction, 'D');
-            $instrLines = [];
-            $hasInstruction = false;
-        }
-        if ($hasObjective ===false && empty($objLines) === false) {
-            $this->mergeVertical($sheet, $objLines, $globalObjective, 'E');
-            $objLines = [];
-            $hasObjective = false;
-        }*/
     }
 
 
@@ -225,10 +165,7 @@ class SessionXlsxWriter implements DataWriterInterface
     private function writeActivity(
         Worksheet $sheet,
         int &$line,
-        array $activity,
-        bool &$hasDescription = false,
-        bool &$hasInstruction = false,
-        bool &$hasObjective = false
+        array $activity
     ): void
     {
         $exercises = array_values(array_filter(
@@ -239,9 +176,6 @@ class SessionXlsxWriter implements DataWriterInterface
         // Convention TEMPORAIRE, à remplacer par une donnée métier :
         // premier exercice = Tireur A, deuxième = Tireur B.
         // Les exercices supplémentaires sont affichés dans la colonne A.
-        $hasDescription = (empty($activity['description']) === false);
-        $hasInstruction = (empty($activity['instruction']) === false);
-        $hasObjective = (empty($activity['objective']) === false);
         $values = [];
         $value = [];
         foreach($exercises as $index => $exercise) {
@@ -266,9 +200,11 @@ class SessionXlsxWriter implements DataWriterInterface
         }
 
         $finaleValues = [];
+        $activityDuration = $activity['duration'] ?? 0;
+        $activityDuration = (ctype_digit($activityDuration) === true) ? $activityDuration.' mn': $activityDuration;
         foreach($values as $item) {
             array_unshift($item, (($activity['description']) ?? null));
-            array_push($item, (($activity['instruction']) ?? null), (($activity['objective']) ?? null), (string) ($activity['duration'] ?? ''));
+            array_push($item, (($activity['instruction']) ?? null), (($activity['objective']) ?? null), (string)$activityDuration);
             $item = array_combine(['A', 'B', 'C', 'D', 'E', 'F'], $item);
             $finaleValues[] = $item;
         }
@@ -299,19 +235,6 @@ class SessionXlsxWriter implements DataWriterInterface
             }
             $line ++;
         }
-        /*
-        $this->styleRange($sheet, "A{$line}:F{$line}", 'activity');
-        $sheet->getStyle("A{$line}")->getFont()->setBold(true);
-        $sheet->getStyle("F{$line}")->getFont()->setBold(true);
-        $sheet->getStyle("F{$line}")->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
-
-        $maxLines = 1;
-        $charsPerLine = [23, 30, 30, 34, 27, 12];
-        foreach ($values as $i => $value) {
-            $maxLines = max($maxLines, $this->estimatedLines($value, $charsPerLine[$i]));
-        }
-        $sheet->getRowDimension($line++)->setRowHeight(min(125, max(30, 13 * $maxLines + 7)));
-        */
     }
 
     private function configureLineStyle(
@@ -364,8 +287,8 @@ class SessionXlsxWriter implements DataWriterInterface
     {
         $sheet->mergeCells($range);
         $first = explode(':', $range)[0];
-        $sheet->setCellValue($first, $text);
         $this->styleRange($sheet, $range, $kind);
+        $sheet->setCellValue($first, $text);
     }
 
     private function styleRange(Worksheet $sheet, string $range, string $kind): void
@@ -386,20 +309,6 @@ class SessionXlsxWriter implements DataWriterInterface
             ->getColor()->setARGB($style['font']);
         $s->getAlignment()->setWrapText(true)
             ->setVertical(Alignment::VERTICAL_CENTER);
-    }
-
-    private function estimatedLines(string $value, int $charsPerLine): int
-    {
-        $lines = 0;
-        foreach (explode("\n", $value) as $segment) {
-            $lines += max(1, (int) ceil(mb_strlen($segment) / $charsPerLine));
-        }
-        return $lines;
-    }
-
-    private function height(string $value, int $charsPerLine, int $minimum, int $maximum): int
-    {
-        return min($maximum, max($minimum, 13 * $this->estimatedLines($value, $charsPerLine) + 6));
     }
 
     private function uniqueSheetTitle(string $title): string

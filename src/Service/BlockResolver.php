@@ -25,16 +25,17 @@ final class BlockResolver
      * @param  array               $data
      * @param  \App\Entity\Session $entity
      * @param  int                 $entityIndex
+     * @param  bool                $clone
      *
      * @return ErrorResolver
      */
-    public function resolve(array $data, Session $entity, int $entityIndex = 0): ErrorResolver
+    public function resolve(array $data, Session $entity, int $entityIndex = 0, bool $clone = false): ErrorResolver
     {
         $errors = [];
         foreach($data as $index => $item) {
             $id = ($item['id']) ?? null;
             $group = 'block:create';
-            if ($id === null) {
+            if ($id === null || $clone === true) {
                 $block = new Block();
                 $this->entityManager->persist($block);
             } else {
@@ -48,11 +49,11 @@ final class BlockResolver
                     continue;
                 }
             }
+            /**@var Block $block */
             $block->setName($item['name'] ?? '');
             $block->setDescription($item['description'] ?? null);
             $block->setObjective($item['objective'] ?? null);
             $block->setInstruction($item['instruction'] ?? null);
-            $block->setDuration($item['duration'] ?? 0);
             $violations = $this->validator->validate($block, groups:['Default', $group]);
             if (count($violations) > 0) {
                 /** @var ConstraintViolationInterface $violation */
@@ -70,15 +71,17 @@ final class BlockResolver
             } else {
                 $activities = ($item['activities']) ?? [];
                 /** @var ErrorResolver $errorResolver */
-                $errorResolver = $this->activityResolver->resolve($activities, $block, $index);
+                $errorResolver = $this->activityResolver->resolve($activities, $block, $index, $clone);
                 if ($errorResolver->isValid() === false) {
                     $errors = array_merge($errors, $errorResolver->errors);
                 } else {
+                    $block->setTotalDuration();
                     $entity->addBlock($block);
                 }
 
             }
         }
+        $entity->setTotalDuration();
         return new ErrorResolver($entity, $errors);
     }
 }

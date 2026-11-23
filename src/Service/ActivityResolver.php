@@ -25,16 +25,17 @@ final class ActivityResolver
      * @param  array             $data
      * @param  \App\Entity\Block $entity
      * @param  int               $entityIndex
+     * @param  bool              $clone
      *
      * @return ErrorResolver
      */
-    public function resolve(array $data, Block $entity, int $entityIndex = 0): ErrorResolver
+    public function resolve(array $data, Block $entity, int $entityIndex = 0, bool $clone = false): ErrorResolver
     {
         $errors = [];
         foreach($data as $index => $item) {
             $id = ($item['id']) ?? null;
             $group = 'activity:create';
-            if ($id === null) {
+            if ($id === null || $clone === true) {
                 $activity = new Activity();
                 $this->entityManager->persist($activity);
             } else {

@@ -74,9 +74,8 @@ class Session
     {
         $this->dateCreate = new DateTime();
     }
-    #[ORM\PrePersist]
-    #[ORM\PreUpdate]
-    public function updateDuration(): void
+
+    public function setTotalDuration(): void
     {
         $durations = $this->getBlocks()->reduce(
             fn(int $total, Block $block) =>
@@ -226,5 +225,16 @@ class Session
         $this->blockOrder = $blockOrder;
 
         return $this;
+    }
+
+    public function toArray() : array
+    {
+        return [
+            'id' => $this->getId(),
+            'name' => $this->getName(),
+            'description' => $this->getDescription(),
+            'target' => $this->getTarget(),
+            'blocks' => []
+        ];
     }
 }

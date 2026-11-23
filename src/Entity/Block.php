@@ -83,9 +83,7 @@ class Block
         $this->dateCreate = new DateTime();
     }
 
-    #[ORM\PrePersist]
-    #[ORM\PreUpdate]
-    public function updateDuration(): void
+    public function setTotalDuration(): void
     {
         $durations = $this->getActivities()->reduce(
             fn(int $total, Activity $activity) =>
@@ -294,5 +292,17 @@ class Block
         $this->activityOrder = $activityOrder;
 
         return $this;
+    }
+
+    public function toArray() : array
+    {
+        return [
+            'id' => $this->getId(),
+            'name' => $this->getName(),
+            'description' => $this->getDescription(),
+            'objective' => $this->getObjective(),
+            'instruction' => $this->getInstruction(),
+            'activities' => []
+        ];
     }
 }

@@ -1,15 +1,16 @@
 
-import { Component, input, output, signal} from '@angular/core';
+import { Component, input, output, signal, inject, OnInit} from '@angular/core';
 import {
   FormArray,
   FormBuilder,
   FormGroup,
-  ReactiveFormsModule,
-  Validators
+  ReactiveFormsModule
 } from '@angular/forms';
 
 import { ActivityComponent } from '../activity/activity';
-import { createActivity } from '../../models/session';
+import { createActivity, Exercise } from '../../models/session';
+import { ExerciseService } from '../../../../core/api/exercises';
+import { ExerciseSelectorComponent } from '../../../../components/exercise-selector/exercise-selector';
 
 import {
   createActivityForm,
@@ -20,7 +21,7 @@ const durationPattern = /^(?:\d+|\[\d+\+\d+\]|\d+\[\d+\+\d+\])$/;
 @Component({
   selector: 'app-block',
   standalone: true,
-  imports: [ReactiveFormsModule, ActivityComponent],
+  imports: [ReactiveFormsModule, ActivityComponent, ExerciseSelectorComponent],
   templateUrl: './block.html',
   styleUrl: './block.css'
 })
@@ -28,13 +29,26 @@ export class BlockComponent {
   readonly form = input.required<FormGroup>();
   readonly index = input.required<number>();
   readonly remove = output<void>();
+  private readonly exerciseService = inject(ExerciseService);
 
+  readonly availableExercises = signal<Exercise[]>([]);
 
 
   constructor(private readonly fb: FormBuilder) {}
 
   readonly collapsed = signal(false);
   readonly separator = signal(false);
+
+  ngOnInit(): void {
+    this.exerciseService.getAll().subscribe({
+      next: exercises => {
+        this.availableExercises.set(exercises);
+      },
+      error: error => {
+        console.error('Erreur lors du chargement des exercices', error);
+      }
+    });
+  }
 
   toggleSeparator(): void {
     this.separator.update(value => !value);
@@ -55,25 +69,6 @@ export class BlockComponent {
 
     // Création de l'activité avec ses validateurs
     const activityForm = createActivityForm(this.fb, activity);
-
-    // Ajout des deux exercices par défaut
-    const exercises = activityForm.get('exercises') as FormArray<FormGroup>;
-
-    exercises.push(
-      createExerciseForm(this.fb, {
-        id: null,
-        name: 'Tireur A',
-        description: ''
-      })
-    );
-
-    exercises.push(
-      createExerciseForm(this.fb, {
-        id: null,
-        name: 'Tireur B',
-        description: ''
-      })
-    );
 
     this.activities.push(activityForm);
   }
