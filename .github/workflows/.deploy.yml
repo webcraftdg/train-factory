@@ -1,0 +1,123 @@
+name: TrainFactory - CI/CD
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+
+  # ==========================================
+  # PREPARATION ET DEPLOIEMENT OVH
+  # ==========================================
+
+  deploy:
+    name: Deploy TrainFactory to OVH
+
+    runs-on: ubuntu-latest
+
+    env:
+      APP_ENV: prod
+      APP_DEBUG: 0
+      APP_SECRET: build_only_secret
+
+    steps:
+
+      # ==========================================
+      # 1. SYMFONY
+      # ==========================================
+
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup PHP 8.4
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4'
+          extensions: mbstring, intl, pdo_mysql, zip, gd
+          tools: composer:v2
+
+      - name: Configure Composer authentication
+        env:
+          GH_TOKEN: ${{ secrets.TOKEN_GITHUB }}
+        run: |
+          if [ -n "$GH_TOKEN" ]; then
+            composer config --global github-oauth.github.com "$GH_TOKEN"
+          fi
+
+      - name: Install production dependencies
+        run: |
+          composer install \
+            --no-dev \
+            --no-scripts \
+            --optimize-autoloader \
+            --no-interaction \
+            --prefer-dist \
+            --no-progress
+
+      - name: Install bundle assets
+        run: php bin/console assets:install public
+
+      - name: Install Importmap dependencies
+        run: php bin/console importmap:install
+
+      - name: Build Tailwind CSS
+        run: php bin/console tailwind:build --minify
+
+      - name: Compile AssetMapper
+        run: php bin/console asset-map:compile
+
+      # ==========================================
+      # 2. ANGULAR
+      # ==========================================
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install Angular dependencies
+        working-directory: frontend
+        run: npm ci
+
+      - name: Build and publish Angular
+        working-directory: frontend
+        run: npm run publish
+
+      - name: Verify Angular build
+        run: |
+          test -f public/angular/index.html
+          ls -lh public/angular/
+
+      # ==========================================
+      # 3. DEPLOIEMENT OVH
+      # ==========================================
+
+      - name: Deploy to OVH
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.4
+        with:
+          server: ${{ secrets.FTP_SERVER }}
+          username: ${{ secrets.FTP_USER }}
+          password: ${{ secrets.FTP_PASS }}
+          protocol: ftps
+          local-dir: ./
+          server-dir: /www/trainfactory/
+          dangerous-clean-slate: false
+          exclude: |
+            **/.git/**
+            **/.github/**
+            **/frontend/**
+            **/node_modules/**
+            **/tests/**
+            **/.env.local
+            **/.env.*.local
+            **/var/cache/**
+            **/var/log/**
+            **/var/tailwind/**
+            **/phpunit.xml
+            **/phpunit.xml.dist
+            **/phpunit.dist.xml
+            **/.phpunit.cache/**
+            **/config/jwt/*.pem

@@ -2,3 +2,15 @@
   display: block;
   width: 100%;
 }
+
+@media (max-width: 767px) {
+  .activity-table-wrap { overflow: visible; padding: .5rem; background: #f1f5f9; }
+  .activity-table { display: block; min-width: 0; width: 100%; }
+  .activity-table colgroup, .activity-table thead { display: none; }
+  .activity-table tbody { display: block; }
+  .activity-table tr[app-activity] { margin-top: .75rem; border: 1px solid #cbd5e1; border-radius: .5rem .5rem 0 0; background: white; }
+  .activity-actions { display: block; border: 1px solid #cbd5e1; border-top: 0; border-radius: 0 0 .5rem .5rem; }
+  .activity-actions > td:first-child { display: block; width: 100%; border: 0; }
+  .activity-actions > td:last-child, .activity-actions.mobile-collapsed { display: none; }
+  .activity-actions button { min-height: 40px; }
+}

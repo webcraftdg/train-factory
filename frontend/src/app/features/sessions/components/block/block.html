@@ -6,7 +6,7 @@
   <!-- Barre supérieure du bloc -->
   <div class="flex min-h-11 items-center gap-4 border-b border-slate-500 bg-slate-200 px-3">
     <label class="flex min-w-0 flex-1 items-center gap-4">
-      <span class="shrink-0 text-xs font-bold text-slate-800">
+      <span class="hidden shrink-0 text-xs font-bold text-slate-800 md:inline">
         Partie de séance
       </span>
 
@@ -63,8 +63,8 @@
 
       <!-- Partie droite -->
       <div class="min-w-0">
-        <div class="overflow-x-auto">
-          <table class="w-full min-w-[700px] table-fixed border-collapse text-sm">
+        <div class="activity-table-wrap overflow-x-auto">
+          <table class="activity-table w-full min-w-[700px] table-fixed border-collapse text-sm">
 
             <colgroup>
               <col style="width: 22%" />
@@ -100,16 +100,17 @@
                     app-activity
                     #activityComponent="appActivity"
                     [form]="activity"
+                    [mobileIndex]="i"
                     (remove)="removeActivity(i)"
                   ></tr>
 
-                  <tr class="bg-slate-50">
+                  <tr class="activity-actions bg-slate-50" [class.mobile-collapsed]="activityComponent.mobileCollapsed() && !(activity.invalid && activity.touched)">
                     <td colspan="2" class="border-b border-r border-slate-400 p-2">
                       <div class="flex flex-wrap items-center gap-2">
                             <button
                           type="button"
                           (click)="activityComponent.addExercise()"
-                          [disabled]="activityComponent.exercises.length >= 2"
+                          [disabled]="activityComponent.exerciseCount() >= 2"
                           class="inline-flex items-center gap-1 rounded-lg bg-blue-600 px-3 py-1.5 text-xs font-semibold text-white transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-40"
                         >
                           <svg width="12px" height="12px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">

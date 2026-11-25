@@ -19,6 +19,7 @@ type ExerciseForm = FormGroup<{
 @Component({
   selector: 'tr[app-activity]',
   exportAs: 'appActivity',
+  host: { '[class.mobile-collapsed]': 'mobileCollapsed() && !(form().invalid && form().touched)' },
   standalone: true,
   imports: [ReactiveFormsModule],
   templateUrl: './activity.html',
@@ -27,6 +28,8 @@ type ExerciseForm = FormGroup<{
 export class ActivityComponent  implements OnInit {
   readonly form = input.required<FormGroup>();
   readonly remove = output<void>();
+  readonly mobileIndex = input(0);
+  readonly mobileCollapsed = signal(false);
   readonly showInstruction = signal(true);
   readonly exerciseCount = signal(0);
   readonly exerciseSelectorOpen = signal(false);
