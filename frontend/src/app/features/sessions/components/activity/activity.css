@@ -11,3 +11,16 @@ input,
 textarea {
   box-sizing: border-box;
 }
+
+.mobile-summary, .mobile-label { display: none; }
+.hydration-label { flex-wrap: wrap; font-size: .75rem; }
+.hydration-label span { min-width: 0; overflow-wrap: anywhere; }
+@media (max-width: 767px) {
+  :host { display: block; }
+  :host > td { display: block; width: 100%; border-right: 0; }
+  :host > .mobile-summary { display: block; background: #e2e8f0; }
+  :host(.mobile-collapsed) > td:not(.mobile-summary) { display: none; }
+  .mobile-label { display: block; padding: .65rem .75rem 0; font-weight: 600; color: #334155; }
+  .hydration-label { font-size: .875rem; flex-wrap: nowrap; }
+  input, textarea { font-size: 16px; }
+}

@@ -1,11 +1,19 @@
 
 <ng-container [formGroup]="form()">
+    <td class="mobile-summary">
+      <button type="button" class="flex w-full items-center justify-between gap-2 p-3 text-left font-semibold"
+        [attr.aria-expanded]="!mobileCollapsed() || (form().invalid && form().touched)" (click)="mobileCollapsed.update(value => !value)">
+        <span>Situation {{ mobileIndex() + 1 }} · {{ exerciseCount() }} exercice(s)</span>
+        <span>{{ mobileCollapsed() && !(form().invalid && form().touched) ? '▸' : '▾' }}</span>
+      </button>
+    </td>
 
     <!-- EXERCICE 1 -->
     <td
       [attr.colspan]="exerciseCount() < 2 ? 2 : 1"
-      class="border-b border-r border-slate-400 align-top"
+      class="activity-cell border-b border-r border-slate-400 align-top"
     >
+      <span class="mobile-label">Exercices</span>
       @if (exerciseCount() > 0) {
         <div
           [formGroup]="exercises.at(0)"
@@ -88,6 +96,7 @@
     <!-- CONSIGNE -->
     @if (showInstruction()) {
       <td class="border-b border-r border-slate-400 align-top">
+        <span class="mobile-label">Consigne</span>
         <div class="relative min-h-28 p-2">
 
           <textarea
@@ -123,6 +132,7 @@
       [attr.colspan]="showInstruction() ? 1 : 2"
       class="border-b border-r border-slate-400 align-top"
     >
+      <span class="mobile-label">Objectif</span>
       <div class="min-h-28 p-2">
 
         <textarea
@@ -154,6 +164,7 @@
 
     <!-- DURÉE -->
     <td class="border-b border-slate-400 align-top">
+      <span class="mobile-label">Durée</span>
       <div class="relative min-h-28 p-2 pt-9">
 
         <input
@@ -169,13 +180,13 @@
         </p>
       }
 
-        <label class="flex items-center gap-2">
+        <label class="hydration-label flex items-center gap-1">
           <input
             type="checkbox"
             formControlName="hydration"
             class="accent-blue-600"
           />
-          Hydratation
+          <span>Hydratation</span>
         </label>
 
         <button
