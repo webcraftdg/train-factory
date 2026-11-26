@@ -31,6 +31,7 @@ export interface Session {
   name: string;
   description: string;
   target: string;
+  duration: number;
   blocks: Block[];
 }
 
@@ -73,6 +74,7 @@ export function createSession(): Session {
     name: '',
     description: '',
     target: '',
+    duration:0,
     blocks: []
   };
 }
