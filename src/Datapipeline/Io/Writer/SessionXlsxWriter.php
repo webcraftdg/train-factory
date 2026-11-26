@@ -37,7 +37,7 @@ class SessionXlsxWriter implements DataWriterInterface
     private static array $defaultBorders = [
         'outline' => [
             'borderStyle' => Border::BORDER_THIN,
-            'color' => ['argb' => '00000000'], // noir
+            'color' => ['argb' => 'FF000000'], // noir
         ],
     ];
 
@@ -147,7 +147,7 @@ class SessionXlsxWriter implements DataWriterInterface
             array_pop($descLines);
         }
 
-        if (count($descLines) > 1) {
+        if (empty($descLines) === false) {
             $this->mergeVertical($sheet, $descLines, $globalDescription);
         }
     }
@@ -162,6 +162,16 @@ class SessionXlsxWriter implements DataWriterInterface
         $sheet->setCellValue("{$columnName}{$posA}", $value);
         $this->configureLineStyle($sheet, $posA, $columnName);
     }
+
+    /**
+     * write Activity
+     *
+     * @param  \PhpOffice\PhpSpreadsheet\Worksheet\Worksheet $sheet
+     * @param  int                                           $line
+     * @param  array                                         $activity
+     *
+     * @return void
+     */
     private function writeActivity(
         Worksheet $sheet,
         int &$line,
@@ -198,7 +208,7 @@ class SessionXlsxWriter implements DataWriterInterface
             }
             $values[] = $value;
         }
-
+        $separator = ($activity['separatorAfter']) ?? false;
         $finaleValues = [];
         $activityDuration = $activity['duration'] ?? 0;
         $activityDuration = (ctype_digit($activityDuration) === true) ? $activityDuration.' mn': $activityDuration;
@@ -207,6 +217,13 @@ class SessionXlsxWriter implements DataWriterInterface
             array_push($item, (($activity['instruction']) ?? null), (($activity['objective']) ?? null), (string)$activityDuration);
             $item = array_combine(['A', 'B', 'C', 'D', 'E', 'F'], $item);
             $finaleValues[] = $item;
+        }
+        $borders = self::$defaultBorders;
+        if($separator === true) {
+            $borders['bottom'] = [
+                'borderStyle' => Border::BORDER_MEDIUM,
+                'color' => ['argb' => 'FFFF0000'],
+            ];
         }
 
         foreach ($finaleValues as $indexValue => $row) {
@@ -221,6 +238,7 @@ class SessionXlsxWriter implements DataWriterInterface
                         line:$line,
                         colStart:$prevColumn,
                         colEnd:$col,
+                        borders: $borders,
                         alignHorizontal:Alignment::HORIZONTAL_LEFT);
                 } else {
                     $align = ($col == 'F') ? Alignment::HORIZONTAL_CENTER : Alignment::HORIZONTAL_LEFT;
@@ -228,6 +246,7 @@ class SessionXlsxWriter implements DataWriterInterface
                         sheet:$sheet,
                         line:$line,
                         colStart:$col,
+                        borders: $borders,
                         alignHorizontal:$align);
                 }
 
@@ -245,7 +264,7 @@ class SessionXlsxWriter implements DataWriterInterface
         array $borders = [],
         array $font = [],
         string $alignHorizontal = Alignment::HORIZONTAL_CENTER,
-        string $alignVertical = Alignment::HORIZONTAL_CENTER,
+        string $alignVertical = Alignment::HORIZONTAL_CENTER
         )
     {
         $arrayStyle = [];

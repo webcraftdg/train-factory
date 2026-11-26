@@ -13,8 +13,7 @@ import { ExerciseService } from '../../../../core/api/exercises';
 import { ExerciseSelectorComponent } from '../../../../components/exercise-selector/exercise-selector';
 
 import {
-  createActivityForm,
-  createExerciseForm
+  createActivityForm
 } from '../../forms/session-form.factory';
 
 const durationPattern = /^(?:\d+|\[\d+\+\d+\]|\d+\[\d+\+\d+\])$/;
@@ -37,7 +36,6 @@ export class BlockComponent {
   constructor(private readonly fb: FormBuilder) {}
 
   readonly collapsed = signal(false);
-  readonly separator = signal(false);
 
   ngOnInit(): void {
     this.exerciseService.getAll().subscribe({
@@ -48,10 +46,6 @@ export class BlockComponent {
         console.error('Erreur lors du chargement des exercices', error);
       }
     });
-  }
-
-  toggleSeparator(): void {
-    this.separator.update(value => !value);
   }
 
 

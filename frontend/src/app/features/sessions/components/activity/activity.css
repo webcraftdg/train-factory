@@ -24,3 +24,26 @@ textarea {
   .hydration-label { font-size: .875rem; flex-wrap: nowrap; }
   input, textarea { font-size: 16px; }
 }
+
+
+.activity-textarea {
+    display: block;
+    min-height: 6rem;
+    field-sizing: content;
+}
+
+textarea[formControlName="instruction"],
+textarea[formControlName="objective"] {
+    min-height: 8rem;
+}
+
+@media (max-width: 767px) {
+    .activity-textarea {
+        min-height: 5rem;
+    }
+
+    textarea[formControlName="instruction"],
+    textarea[formControlName="objective"] {
+        min-height: 5rem;
+    }
+}

@@ -5,15 +5,17 @@ on:
     tags:
       - 'v*'
 
-jobs:
+permissions:
+  contents: read
 
-  # ==========================================
-  # PREPARATION ET DEPLOIEMENT OVH
-  # ==========================================
+concurrency:
+  group: trainfactory-production
+  cancel-in-progress: false
+
+jobs:
 
   deploy:
     name: Deploy TrainFactory to OVH
-
     runs-on: ubuntu-latest
 
     env:
@@ -24,17 +26,33 @@ jobs:
     steps:
 
       # ==========================================
-      # 1. SYMFONY
+      # 1. VERIFICATION DE LA VERSION
       # ==========================================
 
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Verify master branch
+        run: |
+          git fetch origin master
+
+          if ! git merge-base --is-ancestor HEAD origin/master; then
+            echo "Deployment rejected: tag must belong to master."
+            exit 1
+          fi
+
+      # ==========================================
+      # 2. SYMFONY
+      # ==========================================
 
       - name: Setup PHP 8.4
         uses: shivammathur/setup-php@v2
         with:
           php-version: '8.4'
           extensions: mbstring, intl, pdo_mysql, zip, gd
+          coverage: none
           tools: composer:v2
 
       - name: Configure Composer authentication
@@ -68,7 +86,7 @@ jobs:
         run: php bin/console asset-map:compile
 
       # ==========================================
-      # 2. ANGULAR
+      # 3. ANGULAR
       # ==========================================
 
       - name: Setup Node.js
@@ -86,13 +104,13 @@ jobs:
         working-directory: frontend
         run: npm run publish
 
-      - name: Verify Angular build
+      - name: Verify Angular assets
         run: |
           test -f public/angular/index.html
           ls -lh public/angular/
 
       # ==========================================
-      # 3. DEPLOIEMENT OVH
+      # 4. DEPLOIEMENT OVH
       # ==========================================
 
       - name: Deploy to OVH
@@ -106,8 +124,8 @@ jobs:
           server-dir: /www/trainfactory/
           dangerous-clean-slate: false
           exclude: |
-            **/.git/**
-            **/.github/**
+            **/.git*
+            **/.git*/**
             **/frontend/**
             **/node_modules/**
             **/tests/**

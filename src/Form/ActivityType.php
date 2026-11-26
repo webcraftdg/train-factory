@@ -24,6 +24,10 @@ class ActivityType extends AbstractType
             ->add('objective', TextareaType::class, ['label' => 'Objectif', 'required' => false])
             ->add('instruction', TextareaType::class, ['label' => 'Consigne', 'required' => false])
             ->add('duration', TextType::class, ['label' => 'Durée'])
+            ->add('separatorAfter', CheckboxType::class, [
+                'label' => 'Ajouter une séparation dans l\'export',
+                'required' => false
+            ])
             ->add('hydration', CheckboxType::class, [
                 'label' => 'Ajouter l\'hydratation',
                 'required' => false
