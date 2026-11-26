@@ -6,6 +6,7 @@ import {
 } from '../../core/api/sessions';
 
 import {Session} from '../sessions/models/session'
+import { Permissions, Role } from '../../core/auth/permissions';
 
 @Component({
   selector: 'app-sessions',
@@ -23,7 +24,9 @@ export class Sessions implements OnInit {
   readonly downloadingId = signal<number | null>(null);
   readonly duplicatingId = signal<number | null>(null);
   readonly error = signal<string | null>(null);
+  readonly permissions = inject(Permissions);
   ngOnInit(): void {
+    console.log(this.permissions.hasRole(Role.CREATOR), this.permissions.hasRole(Role.COACH));
     this.loadSessions();
   }
 

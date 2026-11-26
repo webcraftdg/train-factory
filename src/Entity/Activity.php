@@ -338,7 +338,7 @@ class Activity
             'instruction' => $this->getInstruction(),
             'duration' => $this->getDuration(),
             'hydration' => $this->isHydration(),
-            'separator' => $this->isSeparatorAfter(),
+            'separatorAfter' => $this->isSeparatorAfter(),
             'exercises' => []
         ];
     }

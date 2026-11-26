@@ -1,5 +1,7 @@
 import { Routes } from '@angular/router';
 import { authGuard } from './core/auth/auth-guard';
+import { permissionGuard } from './core/auth/permission-guard';
+import { Role } from './core/auth/permissions';
 
 export const routes: Routes = [
   {
@@ -20,23 +22,41 @@ export const routes: Routes = [
   },
   {
   path: 'seances',
-  canActivate: [authGuard],
+  canActivate: [
+      authGuard,
+      permissionGuard(Role.COACH)
+  ],
   loadComponent: () =>
     import('./features/sessions/sessions').then(m => m.Sessions)
 },
 {
   path: 'seances/creer',
-  canActivate: [authGuard],
+  canActivate: [
+    authGuard,
+    permissionGuard(Role.CREATOR)
+  ],
   loadComponent: () =>
     import('./features/sessions/session-editor/session-editor')
       .then(m => m.SessionEditor)
 },
 {
   path: 'seances/:id/modifier',
-  canActivate: [authGuard],
+  canActivate: [
+    authGuard,
+    permissionGuard(Role.CREATOR)],
   loadComponent: () =>
     import('./features/sessions/session-editor/session-editor')
       .then(m => m.SessionEditor)
+},
+{
+    path: 'seances/:id',
+    canActivate: [
+      authGuard,
+      permissionGuard(Role.TRAINEE)
+    ],
+    loadComponent: () =>
+        import('./features/sessions/session-view/session-view')
+            .then(m => m.SessionView)
 },
   {
     path: '**',

@@ -39,6 +39,7 @@ class ApiActivityType extends AbstractType
         $resolver->setDefaults([
             'csrf_protection' => false,
             'validation_groups' => ['Default'],
+            'extra_fields_message' => 'Champs non autorisés : {{ extra_fields }}.',
         ]);
     }
 }

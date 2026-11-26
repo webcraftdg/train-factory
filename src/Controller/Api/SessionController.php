@@ -39,7 +39,7 @@ final class SessionController extends AbstractController
     }
 
     #[Route('', name: 'list', methods:['GET'])]
-    #[IsGranted(User::ROLE_CREATOR)]
+    #[IsGranted(User::ROLE_COACH)]
     #[OA\Get(
         path: '/api/sessions',
         summary: 'Liste des séances',
@@ -56,6 +56,29 @@ final class SessionController extends AbstractController
     {
         $entities = $this->sessionRepository->findAll();
         return $this->json($entities, JsonResponse::HTTP_OK, context:['groups' => ['session:detail']]);
+    }
+
+    #[Route('/{id}', name: 'get', methods:['GET'])]
+    #[IsGranted(User::ROLE_TRAINEE)]
+    #[OA\Get(
+        path: '/api/sessions/{id}',
+        summary: 'Lit une séance',
+        tags:['Sessions'],
+        responses: [
+            new OA\Response(
+                response:200,
+                description: 'Lecture',
+                content: new Model(type:ApiSessionType::class, groups:['session:detail'])
+            ),
+             new OA\Response(
+                response:404,
+                description: 'Non trouvé',
+            )
+        ]
+    )]
+    public function get(Session $entity): JsonResponse
+    {
+        return $this->json($entity, JsonResponse::HTTP_OK, context:['groups' => ['session:detail']]);
     }
 
     #[Route('', name: 'create', methods:['POST'])]
@@ -182,29 +205,6 @@ final class SessionController extends AbstractController
         $this->entityManager->remove($entity);
         $this->entityManager->flush();
         return $this->json(null, JsonResponse::HTTP_NO_CONTENT);
-    }
-
-    #[Route('/{id}', name: 'get', methods:['GET'])]
-    #[IsGranted(User::ROLE_TRAINEE)]
-    #[OA\Get(
-        path: '/api/sessions/{id}',
-        summary: 'Lit une séance',
-        tags:['Sessions'],
-        responses: [
-            new OA\Response(
-                response:200,
-                description: 'Lecture',
-                content: new Model(type:ApiSessionType::class, groups:['session:detail'])
-            ),
-             new OA\Response(
-                response:404,
-                description: 'Non trouvé',
-            )
-        ]
-    )]
-    public function get(Session $entity): JsonResponse
-    {
-        return $this->json($entity, JsonResponse::HTTP_OK, context:['groups' => ['session:detail']]);
     }
 
     private function manageActivity(FormInterface $form, array $data, Session $entity, bool $clone = false) : Response

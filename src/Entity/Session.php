@@ -41,6 +41,7 @@ class Session
     private ?string $target = null;
 
     #[ORM\Column]
+     #[Groups(['session:detail'])]
     private ?int $duration = null;
 
     /**
