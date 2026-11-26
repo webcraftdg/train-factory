@@ -177,7 +177,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    public static function getAvailbaleRoles() : array
+    public static function getAvailableRoles() : array
     {
         return [
             'Moniteur' => User::ROLE_COACH,

@@ -49,12 +49,14 @@ final class ActivityResolver
                     continue;
                 }
             }
+            /**@var Activity $activity */
             $activity->setName($item['name'] ?? '');
             $activity->setDescription($item['description'] ?? null);
             $activity->setObjective($item['objective'] ?? null);
             $activity->setInstruction($item['instruction'] ?? null);
             $activity->setDuration($item['duration'] ?? null);
             $activity->setHydration($item['hydration'] ?? false);
+            $activity->setSeparatorAfter($item['separatorAfter'] ?? false);
             $violations = $this->validator->validate($activity, groups:['Default', $group]);
             if (count($violations) > 0) {
                 /** @var ConstraintViolationInterface $violation */

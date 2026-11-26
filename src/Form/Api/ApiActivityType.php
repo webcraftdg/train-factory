@@ -24,6 +24,8 @@ class ApiActivityType extends AbstractType
             ->add('duration', TextType::class, ['label' => 'Durée'])
             ->add('hydration', CheckboxType::class, [
                 'required' => false
+            ])->add('separatorAfter', CheckboxType::class, [
+                'required' => false
             ])->add('exercises', CollectionType::class, [
                 'entry_type' => ApiExerciseType::class,
                 'mapped' => false,

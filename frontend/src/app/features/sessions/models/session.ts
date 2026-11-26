@@ -13,6 +13,7 @@ export interface Activity {
   instruction: string;
   duration: string;
   hydration: boolean;
+  separatorAfter: boolean;
   exercises: Exercise[];
 }
 
@@ -50,6 +51,7 @@ export function createActivity(): Activity {
     instruction: '',
     duration: '',
     hydration: false,
+    separatorAfter: false,
     exercises: []
   };
 }

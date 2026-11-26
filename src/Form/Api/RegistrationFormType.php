@@ -21,7 +21,7 @@ class RegistrationFormType extends AbstractType
             ->add('firstname')
             ->add('roles', ChoiceType::class, [
                 'multiple' => true,
-                'choices' => User::getAvailbaleRoles(),
+                'choices' => User::getAvailableRoles(),
                 'data' =>  [User::ROLE_COACH]
             ])
         ->add('plainPassword', RepeatedType::class, [

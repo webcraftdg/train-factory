@@ -78,6 +78,10 @@ class Activity
     #[ORM\Column(nullable: true)]
     private ?array $exerciseOrder = null;
 
+    #[ORM\Column(options: ['default' => false])]
+    #[Groups(['activity:detail', 'activity:list', 'session:detail'])]
+    private ?bool $separatorAfter = false;
+
 
     #[ORM\PrePersist]
     #[ORM\PreUpdate]
@@ -334,7 +338,20 @@ class Activity
             'instruction' => $this->getInstruction(),
             'duration' => $this->getDuration(),
             'hydration' => $this->isHydration(),
+            'separator' => $this->isSeparatorAfter(),
             'exercises' => []
         ];
+    }
+
+    public function isSeparatorAfter(): ?bool
+    {
+        return $this->separatorAfter;
+    }
+
+    public function setSeparatorAfter(bool $separatorAfter): static
+    {
+        $this->separatorAfter = $separatorAfter;
+
+        return $this;
     }
 }
