@@ -185,7 +185,7 @@ final class SessionController extends AbstractController
     }
 
     #[Route('/{id}', name: 'get', methods:['GET'])]
-    #[IsGranted(User::ROLE_CREATOR)]
+    #[IsGranted(User::ROLE_TRAINEE)]
     #[OA\Get(
         path: '/api/sessions/{id}',
         summary: 'Lit une séance',

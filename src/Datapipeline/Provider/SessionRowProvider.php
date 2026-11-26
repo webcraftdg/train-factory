@@ -93,6 +93,7 @@ class SessionRowProvider
                 'objective' => $activity->getObjective(),
                 'instruction' => $activity->getInstruction(),
                 'hydration' => $activity->isHydration(),
+                'separatorAfter' => $activity->isSeparatorAfter(),
                 'exercises' => $this->getExercises($activity)
             ];
         }

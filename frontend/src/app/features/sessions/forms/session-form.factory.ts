@@ -68,9 +68,8 @@ export function createActivityForm(
       Validators.required,
       Validators.pattern(durationPattern)
     ]),
-
     hydration: fb.nonNullable.control(activity?.hydration ?? false),
-
+    separatorAfter: [activity?.separatorAfter ?? false],
     exercises: fb.array<FormGroup>(
       (activity?.exercises ?? []).map(exercise =>
         createExerciseForm(fb, exercise)
