@@ -119,7 +119,8 @@ jobs:
           server: ${{ secrets.FTP_SERVER }}
           username: ${{ secrets.FTP_USER }}
           password: ${{ secrets.FTP_PASS }}
-          protocol: ftps
+          protocol: ftp
+          port: 21
           local-dir: ./
           server-dir: /www/trainfactory/
           dangerous-clean-slate: false
