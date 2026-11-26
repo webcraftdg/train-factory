@@ -13,6 +13,9 @@ interface LoginResponse {
 export class Auth {
     private readonly http = inject(HttpClient);
     readonly authenticated = signal(this.getToken() !== null);
+    readonly roles = signal<string[]>(
+        this.extractRoles(this.getToken())
+    );
 
     login(email: string, password: string) {
       return this.http.post<LoginResponse>(
@@ -20,8 +23,9 @@ export class Auth {
         { email, password }
       ).pipe(
         tap(response => {
-          sessionStorage.setItem('access_token', response.token);
-          this.authenticated.set(true);
+            sessionStorage.setItem('access_token', response.token);
+            this.roles.set(this.extractRoles(response.token));
+            this.authenticated.set(true);
         })
       );
     }
@@ -36,8 +40,9 @@ export class Auth {
         { withCredentials: true }
       ).pipe(
         tap(response => {
-          sessionStorage.setItem('access_token', response.token);
-          this.authenticated.set(true);
+            sessionStorage.setItem('access_token', response.token);
+            this.roles.set(this.extractRoles(response.token));
+            this.authenticated.set(true);
         })
       );
     }
@@ -48,6 +53,29 @@ export class Auth {
 
     logout(): void {
       sessionStorage.removeItem('access_token');
+      this.roles.set([]);
       this.authenticated.set(false);
+    }
+
+    private extractRoles(token: string | null): string[] {
+        if (!token) {
+            return [];
+        }
+
+        try {
+            const payload = token.split('.')[1]
+                .replace(/-/g, '+')
+                .replace(/_/g, '/');
+
+            const decoded = JSON.parse(atob(payload));
+
+            return Array.isArray(decoded.roles)
+                ? decoded.roles.filter(
+                    (role: unknown) => typeof role === 'string'
+                )
+                : [];
+        } catch {
+            return [];
+        }
     }
 }
