@@ -1,6 +1,11 @@
 CHANGELOG
 =========
 
+Release v1.2.1 25/11/2026 <davidg@webcraftdg.fr>
+------------------------------------------------
+
+* Fiw title Css/Html
+
 Release v1.2.0 25/11/2026 <davidg@webcraftdg.fr>
 ------------------------------------------------
 
