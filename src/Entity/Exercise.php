@@ -2,6 +2,8 @@
 
 namespace App\Entity;
 
+use App\Enum\Visibility;
+use App\Interface\OrganizationRessourceInterface;
 use App\Repository\ExerciseRepository;
 use DateTime;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -13,7 +15,7 @@ use Symfony\Component\Validator\Constraints\NotBlank;
 
 #[ORM\Entity(repositoryClass: ExerciseRepository::class)]
 #[ORM\HasLifecycleCallbacks]
-class Exercise
+class Exercise implements OrganizationRessourceInterface
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -72,6 +74,13 @@ class Exercise
 
     #[ORM\Column(nullable: true)]
     private ?\DateTime $dateArchived = null;
+
+    #[ORM\Column(enumType: Visibility::class)]
+    private ?Visibility $visibility = Visibility::PRIVATE;
+
+    #[ORM\ManyToOne(inversedBy: 'exercises')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?User $user = null;
 
 
     #[ORM\PrePersist]
@@ -229,5 +238,29 @@ class Exercise
             'name' => $this->getName(),
             'description' => $this->getDescription(),
         ];
+    }
+
+    public function getVisibility(): ?Visibility
+    {
+        return $this->visibility;
+    }
+
+    public function setVisibility(Visibility $visibility): static
+    {
+        $this->visibility = $visibility;
+
+        return $this;
+    }
+
+    public function getUser(): ?User
+    {
+        return $this->user;
+    }
+
+    public function setUser(?User $user): static
+    {
+        $this->user = $user;
+
+        return $this;
     }
 }

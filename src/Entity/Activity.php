@@ -2,6 +2,8 @@
 
 namespace App\Entity;
 
+use App\Enum\Visibility;
+use App\Interface\OrganizationRessourceInterface;
 use App\Repository\ActivityRepository;
 use DateTime;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -14,7 +16,7 @@ use Symfony\Component\Validator\Constraints\NotBlank;
 
 #[ORM\Entity(repositoryClass: ActivityRepository::class)]
 #[ORM\HasLifecycleCallbacks]
-class Activity
+class Activity implements OrganizationRessourceInterface
 {
     const ACTIVITY_HYDRATATION_DURATION = 2;
 
@@ -81,6 +83,13 @@ class Activity
     #[ORM\Column(options: ['default' => false])]
     #[Groups(['activity:detail', 'activity:list', 'session:detail'])]
     private ?bool $separatorAfter = false;
+
+    #[ORM\Column(enumType: Visibility::class)]
+    private ?Visibility $visibility = Visibility::PRIVATE;
+
+    #[ORM\ManyToOne(inversedBy: 'activities')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?User $user = null;
 
 
     #[ORM\PrePersist]
@@ -351,6 +360,30 @@ class Activity
     public function setSeparatorAfter(bool $separatorAfter): static
     {
         $this->separatorAfter = $separatorAfter;
+
+        return $this;
+    }
+
+    public function getVisibility(): ?Visibility
+    {
+        return $this->visibility;
+    }
+
+    public function setVisibility(Visibility $visibility): static
+    {
+        $this->visibility = $visibility;
+
+        return $this;
+    }
+
+    public function getUser(): ?User
+    {
+        return $this->user;
+    }
+
+    public function setUser(?User $user): static
+    {
+        $this->user = $user;
 
         return $this;
     }

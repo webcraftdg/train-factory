@@ -32,7 +32,7 @@ class AppFixtures extends Fixture
         ->setFirstname('admin')
         ->setLastname('admin')
         ->setPassword($this->userPaswwordHasher->hashPassword($userAdmin, 'redcat'))
-        ->setRoles([User::ROLE_ADMIN]);
+        ->setRoles([User::ROLE_SUPER_ADMIN]);
         $manager->persist($userAdmin);
 
         $blocs = [
@@ -87,6 +87,7 @@ class AppFixtures extends Fixture
         foreach($exercises as $name => $descript) {
             $exercise = (new Exercise())
                 ->setName($name)
+                ->setUser($userAdmin)
                 ->setPosition($position)
                 ->setDescription($descript);
             $manager->persist($exercise);
@@ -157,6 +158,7 @@ trajectoir circulaire', 'objective' => 'situation aménagée.'],
             //Echauffement
             $activity = (new Activity());
             $activity->setName($name);
+            $activity->setUser($userAdmin);
             $activity->setDuration('2[2+1]');
             if ($exr1 !== null) {
                 $exr1->setPosition(1);
@@ -169,8 +171,6 @@ trajectoir circulaire', 'objective' => 'situation aménagée.'],
                 $activity->addExercise($exer2);
             }
 
-            $activity->setPosition($position);
-            $position++;
             $manager->persist($activity);
             $recapActiviy['Echauffement'][] = $activity;
         }
@@ -181,6 +181,7 @@ trajectoir circulaire', 'objective' => 'situation aménagée.'],
             $exer2 = $this->exerciseRepository->findOneBy(['name' => $options[1]]);
             //Echauffement
             $activity = (new Activity());
+            $activity->setUser($userAdmin);
             $activity->setName($name)
                 ->setObjective($options['objective'])
                 ->setInstruction($options['instruction']);
@@ -195,17 +196,15 @@ trajectoir circulaire', 'objective' => 'situation aménagée.'],
                 $activity->addExercise($exer2);
             }
             $activity->setDuration('2[2+1]');
-            $activity->setPosition($position);
-            $position++;
             $manager->persist($activity);
             $recapActiviy['Corps'][] = $activity;
         }
 
-        $position = 1;
         foreach($activityRetourCalmOptions as $name => $options) {
             $exr1 = $this->exerciseRepository->findOneBy(['name' => $options[0]]);
             //Echauffement
             $activity = (new Activity());
+            $activity->setUser($userAdmin);
             $activity->setName($name);
             if ($exr1 !== null) {
                 $exr1->setPosition(1);
@@ -213,8 +212,6 @@ trajectoir circulaire', 'objective' => 'situation aménagée.'],
                 $activity->addExercise($exr1);
             }
             $activity->setDuration('4[2+1]');
-            $activity->setPosition($position);
-            $position++;
             $manager->persist($activity);
             $recapActiviy['Retour au calme'][] = $activity;
         }
@@ -230,17 +227,15 @@ trajectoir circulaire', 'objective' => 'situation aménagée.'],
         ];
         foreach($blocNames as $blocName => $options) {
             $block = (new Block())
+            ->setUser($userAdmin)
                 ->setName($blocName)
                 ->setDescription($options[0])
                 ->setDuration(30);
-            $position = 1;
             /** @var Activity $activity */
             foreach($recapActiviy[$blocName] as $activity) {
                 if ($activity !== null) {
-                    $activity->setPosition($position);
                     $manager->persist($activity);
                     $block->addActivity($activity);
-                    $position++;
                 }
             }
             $manager->persist($block);
@@ -251,6 +246,7 @@ trajectoir circulaire', 'objective' => 'situation aménagée.'],
         foreach($sessionNames as $sessionName => $options) {
             $session = (new Session())
                 ->setName($sessionName)
+                ->setUser($userAdmin)
                 ->setDescription($options[0])
                 ->setDuration(90)
                 ->setTarget($options[1]);

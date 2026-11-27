@@ -2,6 +2,8 @@
 
 namespace App\Entity;
 
+use App\Enum\Visibility;
+use App\Interface\OrganizationRessourceInterface;
 use App\Repository\BlockRepository;
 use DateTime;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -13,7 +15,7 @@ use Symfony\Component\Validator\Constraints\NotBlank;
 
 #[ORM\Entity(repositoryClass: BlockRepository::class)]
 #[ORM\HasLifecycleCallbacks]
-class Block
+class Block implements OrganizationRessourceInterface
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -68,6 +70,13 @@ class Block
 
     #[ORM\Column(nullable: true)]
     private ?array $activityOrder = null;
+
+    #[ORM\Column(enumType: Visibility::class)]
+    private ?Visibility $visibility = Visibility::PRIVATE;
+
+    #[ORM\ManyToOne(inversedBy: 'blocks')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?User $user = null;
 
 
     #[ORM\PrePersist]
@@ -304,5 +313,29 @@ class Block
             'instruction' => $this->getInstruction(),
             'activities' => []
         ];
+    }
+
+    public function getVisibility(): ?Visibility
+    {
+        return $this->visibility;
+    }
+
+    public function setVisibility(Visibility $visibility): static
+    {
+        $this->visibility = $visibility;
+
+        return $this;
+    }
+
+    public function getUser(): ?User
+    {
+        return $this->user;
+    }
+
+    public function setUser(?User $user): static
+    {
+        $this->user = $user;
+
+        return $this;
     }
 }

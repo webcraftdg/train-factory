@@ -2,6 +2,8 @@
 
 namespace App\Entity;
 
+use App\Enum\Visibility;
+use App\Interface\OrganizationRessourceInterface;
 use App\Repository\SessionRepository;
 use DateTime;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -18,7 +20,7 @@ use Symfony\Component\Validator\Constraints\NotBlank;
     fields: ['name'],
     message: 'Une séance avec ce nom existe déjà.'
 )]
-class Session
+class Session implements OrganizationRessourceInterface
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -62,6 +64,13 @@ class Session
 
     #[ORM\Column]
     private ?array $blockOrder = [];
+
+    #[ORM\Column(enumType: Visibility::class)]
+    private ?Visibility $visibility = Visibility::PRIVATE;
+
+    #[ORM\ManyToOne(inversedBy: 'sessions')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?User $user = null;
 
     #[ORM\PrePersist]
     #[ORM\PreUpdate]
@@ -237,5 +246,29 @@ class Session
             'target' => $this->getTarget(),
             'blocks' => []
         ];
+    }
+
+    public function getVisibility(): ?Visibility
+    {
+        return $this->visibility;
+    }
+
+    public function setVisibility(Visibility $visibility): static
+    {
+        $this->visibility = $visibility;
+
+        return $this;
+    }
+
+    public function getUser(): ?User
+    {
+        return $this->user;
+    }
+
+    public function setUser(?User $user): static
+    {
+        $this->user = $user;
+
+        return $this;
     }
 }

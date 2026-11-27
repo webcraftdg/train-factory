@@ -61,7 +61,7 @@ class CreateUserCommand extends Command
         $output->writeln('Password : '.$password);
         $output->writeln('Firstname : '.$firstname);
         $output->writeln('Lastname : '.$lastname);
-        $output->writeln('Roles "ROLE_ADMIN", "ROLE_CREATOR", "ROLE_COACH", "ROLE_TRAINEE" : '.$role);
+        $output->writeln('Roles "ROLE_SUPER_ADMIN", "ROLE_ADMIN", "ROLE_CREATOR", "ROLE_COACH", "ROLE_TRAINEE": '.$role);
         $roles = [];
         $rolesAvailables = User::getAvailableRoles();
         $rolesAvailables['Administrateur'] = User::ROLE_ADMIN;
