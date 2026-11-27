@@ -1,10 +1,15 @@
 CHANGELOG
 =========
 
+Release v1.3.0 26/11/2026 <davidg@webcraftdg.fr>
+------------------------------------------------
+
+* Update exercises management in seance created
+
 Release v1.2.1 25/11/2026 <davidg@webcraftdg.fr>
 ------------------------------------------------
 
-* Fiw title Css/Html
+* Fix title Css/Html
 
 Release v1.2.0 25/11/2026 <davidg@webcraftdg.fr>
 ------------------------------------------------
