@@ -33,7 +33,7 @@ export class ActivityComponent  implements OnInit {
   readonly showInstruction = signal(true);
   readonly exerciseCount = signal(0);
   readonly exerciseSelectorOpen = signal(false);
-
+  readonly exerciseCreateOpen = signal(false);
   constructor(private readonly fb: FormBuilder) {}
 
   get exercises(): FormArray<ExerciseForm> {
@@ -52,22 +52,6 @@ export class ActivityComponent  implements OnInit {
     this.form().get('hydration')?.setValue(checked);
   }
 
-  addExercise(): void {
-    const length = this.exercises.length;
-    if (length >= 2) return;
-
-    const name = length === 0 ? 'Tireur A' : 'Tireur B';
-
-    this.exercises.push(
-      createExerciseForm(this.fb, {
-        id: null,
-        name,
-        description: ''
-      })
-    );
-    this.exerciseCount.set(this.exercises.length);
-  }
-
   selectExistingExercise(exercise: Exercise): void {
     if (this.exercises.length >= 2) return;
 
@@ -81,6 +65,23 @@ export class ActivityComponent  implements OnInit {
 
     this.exerciseCount.set(this.exercises.length);
     this.exerciseSelectorOpen.set(false);
+  }
+
+  openExerciseCreate(): void {
+      if (this.exercises.length >= 2) return;
+
+      this.exerciseSelectorOpen.set(false);
+      this.exerciseCreateOpen.set(true);
+  }
+
+  cancelExerciseCreate(): void {
+      this.exerciseCreateOpen.set(false);
+      this.openExerciseSelector();
+  }
+
+  onExerciseCreated(exercise: Exercise): void {
+    this.exerciseCreateOpen.set(false);
+    this.selectExistingExercise(exercise);
   }
 
 

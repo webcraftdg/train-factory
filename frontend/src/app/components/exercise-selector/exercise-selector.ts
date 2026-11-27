@@ -12,6 +12,7 @@ export class ExerciseSelectorComponent {
 
   readonly selected = output<Exercise>();
   readonly closed = output<void>();
+  readonly createRequested = output<void>();
 
   readonly search = signal('');
 
@@ -28,5 +29,9 @@ export class ExerciseSelectorComponent {
 
   selectExercise(exercise: Exercise): void {
     this.selected.emit(exercise);
+  }
+
+  requestCreate(): void {
+    this.createRequested.emit();
   }
 }

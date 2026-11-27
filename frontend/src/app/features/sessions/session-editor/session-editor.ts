@@ -20,6 +20,7 @@ import { BlockComponent } from '../components/block/block';
 import { SessionsService } from '../../../core/api/sessions';
 import { HttpErrorResponse } from '@angular/common/http';
 import { createBlockForm } from '../forms/session-form.factory';
+import { ExerciseService } from '../../../core/api/exercises';
 
 function atLeastOneActivity(control: AbstractControl): ValidationErrors | null
 {
@@ -43,8 +44,12 @@ export class SessionEditor {
   readonly error = signal<string | null>(null);
   private readonly route = inject(ActivatedRoute);
   private readonly sessionService = inject(SessionsService);
+  private readonly exerciseService = inject(ExerciseService);
 
   constructor() {
+    this.exerciseService.load().subscribe({
+        error: error => console.error(error)
+    });
     const sessionId = this.route.snapshot.paramMap.get('id');
 
     if (sessionId === null) {

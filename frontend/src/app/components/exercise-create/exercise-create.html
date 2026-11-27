@@ -1,0 +1,98 @@
+<div
+  class="fixed inset-0 z-50 flex items-center justify-center bg-black/75 p-2 sm:p-4"
+  role="presentation"
+>
+  <section
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="exercise-create-title"
+    class="flex max-h-[90dvh] w-full max-w-2xl flex-col overflow-hidden rounded-xl bg-white shadow-xl"
+  >
+    <header class="flex items-center justify-between border-b p-4">
+      <h2 id="exercise-create-title" class="text-lg font-bold">
+        Créer un exercice
+      </h2>
+
+      <button
+        type="button"
+        (click)="closed.emit()"
+        [disabled]="saving()"
+        aria-label="Fermer"
+        class="min-h-11 min-w-11 text-xl text-slate-500"
+      >
+        ×
+      </button>
+    </header>
+
+    <div
+      [formGroup]="form"
+      class="space-y-4 overflow-y-auto p-4"
+    >
+      <div>
+        <label for="exercise-name" class="mb-1 block text-sm font-semibold">
+          Nom de l'exercice *
+        </label>
+
+        <input
+          id="exercise-name"
+          type="text"
+          formControlName="name"
+          placeholder="Nom de l'exercice"
+          class="w-full rounded-lg border border-slate-300 p-3 outline-none focus:border-blue-500"
+        />
+
+        @if (form.get('name')?.invalid && form.get('name')?.touched) {
+          <p class="mt-1 text-sm text-red-600">
+            Le nom est obligatoire.
+          </p>
+        }
+      </div>
+
+      <div>
+        <label for="exercise-description" class="mb-1 block text-sm font-semibold">
+          Description *
+        </label>
+
+        <textarea
+          id="exercise-description"
+          formControlName="description"
+          rows="5"
+          placeholder="Décrire l'exercice..."
+          class="w-full resize-y rounded-lg border border-slate-300 p-3 outline-none focus:border-blue-500"
+        ></textarea>
+
+        @if (form.get('description')?.invalid && form.get('description')?.touched) {
+          <p class="mt-1 text-sm text-red-600">
+            La description est obligatoire.
+          </p>
+        }
+      </div>
+
+      @if (error()) {
+        <p role="alert" class="rounded-lg bg-red-50 p-3 text-sm text-red-600">
+          {{ error() }}
+        </p>
+      }
+    </div>
+
+    <footer class="flex flex-col-reverse gap-2 border-t p-4 sm:flex-row sm:justify-end">
+      <button
+        type="button"
+        (click)="closed.emit()"
+        [disabled]="saving()"
+        class="rounded-lg border border-slate-300 px-4 py-3 text-sm hover:bg-slate-100"
+      >
+        Annuler
+      </button>
+
+      <button
+        type="button"
+        (click)="save()"
+        [disabled]="saving()"
+        class="rounded-lg bg-blue-600 px-4 py-3 text-sm font-medium text-white hover:bg-blue-700 disabled:opacity-50"
+      >
+        {{ saving() ? 'Enregistrement...' : 'Créer et ajouter' }}
+      </button>
+    </footer>
+  </section>
+</div>
